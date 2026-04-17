@@ -1,8 +1,8 @@
-import { AutoIncrement, BelongsTo, Column, DataType, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
 import { Users } from "../users/users.model";
 
-@Table({ tableName: 'customer', timestamps: false })
-export class Customer extends Model<Customer> {
+@Table({tableName:'store',timestamps:true})
+export class Store extends Model<Store> {
 
     @Column({
         type: DataType.INTEGER,
@@ -21,15 +21,21 @@ export class Customer extends Model<Customer> {
 
     @Column({
         type: DataType.STRING,
-        field: ''
+        field: 'address'
     })
     address: string;
 
     @Column({
         type: DataType.STRING,
-        field: 'phone_number'
+        field: 'store_type'
     })
-    phoneNumber: string;
+    storeType: string;
+
+    @Column({
+        type: DataType.BOOLEAN,
+        field: 'is_open'
+    })
+    isOpen: boolean
 
     @ForeignKey(() => Users)
     @Column({
@@ -39,5 +45,4 @@ export class Customer extends Model<Customer> {
     userId: number;
     @BelongsTo(() => Users)
     users: Users
-
 }
