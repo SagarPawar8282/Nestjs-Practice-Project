@@ -12,7 +12,6 @@ export class CanAuthGuard implements CanActivate {
 
             const request = context.switchToHttp().getRequest<Request>();
 
-            const  t=excludedRoutes.includes(request.url.split('?')[0]);
             if (excludedRoutes.includes(request.url)) {
                 return true;
             }
@@ -36,8 +35,7 @@ export class CanAuthGuard implements CanActivate {
                 return false;
             }
 
-           request['user'] = {email:decodedValue.email};
-            return true;
+           request['user'] = decodedValue;
         } catch (err) {
             console.log(err);
             return false;
@@ -69,7 +67,7 @@ export class CanAuthGuard implements CanActivate {
     }
 
     private extractTokenValue(token:string,authService:AuthService){
-        const decode = authService.decodeToken(token.split('')[0]);
+        const decode = authService.validateToken(token.split(' ')[1]);
         return decode;
     }
 }

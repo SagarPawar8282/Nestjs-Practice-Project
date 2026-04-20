@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CUSTOMER_REPOSITORY} from './customer.Repository';
+import { CUSTOMER_REPOSITORY } from './customer.Repository';
 import { Customer } from './customer.model';
 import { Users } from '../users/users.model';
 import { Roles } from '../roles/roles.model';
@@ -25,7 +25,7 @@ export class CustomerService {
     return `This action updates a # customer`;
   }
 
-  async getNewCustomerDetails(id: number) {
+  async getNewCustomerDetailsByCustomerId(id: number) {
     const customer = await this.customerRepository.findOne({
       where: { id },
       include: [
@@ -39,4 +39,16 @@ export class CustomerService {
     return customer;
   }
 
+  async getCustomerDetailsByUserId(id) {
+    const customer = await this.customerRepository.findOne({
+      where: { userId:id},
+      include:[
+        {
+          model:Users,
+          include:[Roles],
+        }
+      ]
+    });
+    return customer;
+  }
 }

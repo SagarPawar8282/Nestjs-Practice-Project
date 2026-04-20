@@ -57,13 +57,22 @@ export class UsersService {
         return 'failed to register customer';
       }
 
-      const customer = await this.customerService.getNewCustomerDetails(CustRegister.id);
-
-      const payload = { id: customer.users.id, email: customer.users.email, role: customer.users.roles.name };
-      return { access_token: await this.jwtService.signAsync(payload) };
+      const customer = await this.customerService.getNewCustomerDetailsByCustomerId(CustRegister.id);
+      return customer;
       
+
     } catch (err) {
       return err.message;
     }
+  }
+
+  async isCustomerExits(email: string) {
+    const exit = await this.userRepository.findOne({ where: { email: email } });
+    return exit != null ? exit : false;
+  }
+
+  async getCustomerDetails(id:number){
+    const customer = await this.customerService.getCustomerDetailsByUserId(id);
+    return customer;
   }
 }
