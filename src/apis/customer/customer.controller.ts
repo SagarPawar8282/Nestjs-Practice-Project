@@ -1,13 +1,13 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { CustomerService } from './customer.service';
-@Controller('customer')
+@Controller('Customer')
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
   @Post()
-  create(@Body() createCustomerDto) {
-    return this.customerService.create();
-  }
+  // create(@Body() createCustomerDto) {
+  //   return this.customerService.create();
+  // }
 
   @Get()
   findAll() {
@@ -24,8 +24,5 @@ export class CustomerController {
     return this.customerService.update();
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.customerService.remove(+id);
-  }
+  
 }

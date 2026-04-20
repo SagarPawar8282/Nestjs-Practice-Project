@@ -1,21 +1,76 @@
-import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
-import { excludedRoutes } from "excluded.routes";
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
+import { excludedRoutes } from "src/excluded.routes";
 import { Request } from "express";
+import { AuthService } from "./auth.service";
+import { canContextService } from "./context/context.service";
 
 @Injectable()
-export class canAuthGuard implements CanActivate{
-    async canActivate(context: ExecutionContext){
-        try{
+export class CanAuthGuard implements CanActivate {
 
-            const request=context.switchToHttp().getRequest<Request>();
-            if(excludedRoutes.includes(request.url.split('?')[0])){
+    async canActivate(context: ExecutionContext) {
+        try {
+
+            const request = context.switchToHttp().getRequest<Request>();
+
+            const  t=excludedRoutes.includes(request.url.split('?')[0]);
+            if (excludedRoutes.includes(request.url)) {
                 return true;
             }
+            const appContext = canContextService.getAppContext();
+            const authService = appContext.get(AuthService);
+            const token = this.extractAuthorizationHeader(request.headers);
 
-        }catch(err){
+            if(!token){
+                return false;
+            }
+
+            const isBearerToken = await this.validateTokenAndType(token,'Bearer');
+
+            if(!isBearerToken){
+                return false;
+            }
+
+            const decodedValue = await this.extractTokenValue(token,authService);
+
+            if(!decodedValue){
+                return false;
+            }
+
+           request['user'] = {email:decodedValue.email};
+            return true;
+        } catch (err) {
             console.log(err);
+            return false;
+        }
+    }
+
+
+    private extractAuthorizationHeader(headers): string | null {
+        if('authorization' in headers){
+            return headers['authorization'];
+        }
+        return null;
+    }
+
+    private async validateTokenAndType(token:string,type:string){
+        if(!token || !type){
+            return false;
         }
 
+        const splittedToken = token.split(' ');
+        if(splittedToken.length != 2){
+            return false;
+        }
+
+        if(splittedToken[0] != type){
+            return false;
+        }
         return true;
     }
+
+    private extractTokenValue(token:string,authService:AuthService){
+        const decode = authService.decodeToken(token.split('')[0]);
+        return decode;
+    }
 }
+

@@ -1,9 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { CUSTOMER_REPOSITORY} from './customer.Repository';
+import { Customer } from './customer.model';
+import { Users } from '../users/users.model';
+import { Roles } from '../roles/roles.model';
 
 @Injectable()
 export class CustomerService {
-  create() {
-    return 'This action adds a new customer';
+
+  constructor(@Inject(CUSTOMER_REPOSITORY) private readonly customerRepository: typeof Customer) { }
+
+  async RegisterCustomer(customer: any): Promise<Customer> {
+    return this.customerRepository.create(customer);
   }
 
   findAll() {
@@ -18,7 +25,18 @@ export class CustomerService {
     return `This action updates a # customer`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} customer`;
+  async getNewCustomerDetails(id: number) {
+    const customer = await this.customerRepository.findOne({
+      where: { id },
+      include: [
+        {
+          model: Users,
+          include: [Roles],
+        },
+      ],
+    });
+
+    return customer;
   }
+
 }

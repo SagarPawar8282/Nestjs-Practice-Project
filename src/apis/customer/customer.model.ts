@@ -21,7 +21,7 @@ export class Customer extends Model<Customer> {
 
     @Column({
         type: DataType.STRING,
-        field: ''
+        field: 'address'
     })
     address: string;
 
