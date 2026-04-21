@@ -29,4 +29,6 @@ export class StoreController {
   remove(@Param('id') id: string) {
     return this.storeService.remove(+id);
   }
+
+  //@Post('add-bulk-product')
 }
