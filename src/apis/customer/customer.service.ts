@@ -9,7 +9,7 @@ export class CustomerService {
 
   constructor(@Inject(CUSTOMER_REPOSITORY) private readonly customerRepository: typeof Customer) { }
 
-  async RegisterCustomer(customer: any): Promise<Customer> {
+  async customerRegistration(customer: any): Promise<Customer> {
     return this.customerRepository.create(customer);
   }
 

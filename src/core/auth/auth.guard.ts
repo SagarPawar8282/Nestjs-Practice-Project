@@ -19,23 +19,23 @@ export class CanAuthGuard implements CanActivate {
             const authService = appContext.get(AuthService);
             const token = this.extractAuthorizationHeader(request.headers);
 
-            if(!token){
+            if (!token) {
                 return false;
             }
 
-            const isBearerToken = await this.validateTokenAndType(token,'Bearer');
+            const isBearerToken = await this.validateTokenAndType(token, 'Bearer');
 
-            if(!isBearerToken){
+            if (!isBearerToken) {
                 return false;
             }
 
-            const decodedValue = await this.extractTokenValue(token,authService);
-
-            if(!decodedValue){
+            const decodedValue = await this.extractTokenValue(token, authService);
+            if (!decodedValue) {
                 return false;
             }
 
-           request['user'] = decodedValue;
+            request['user'] = decodedValue;
+            return true
         } catch (err) {
             console.log(err);
             return false;
@@ -44,30 +44,30 @@ export class CanAuthGuard implements CanActivate {
 
 
     private extractAuthorizationHeader(headers): string | null {
-        if('authorization' in headers){
+        if ('authorization' in headers) {
             return headers['authorization'];
         }
         return null;
     }
 
-    private async validateTokenAndType(token:string,type:string){
-        if(!token || !type){
+    private async validateTokenAndType(token: string, type: string) {
+        if (!token || !type) {
             return false;
         }
 
         const splittedToken = token.split(' ');
-        if(splittedToken.length != 2){
+        if (splittedToken.length != 2) {
             return false;
         }
 
-        if(splittedToken[0] != type){
+        if (splittedToken[0] != type) {
             return false;
         }
         return true;
     }
 
-    private extractTokenValue(token:string,authService:AuthService){
-        const decode = authService.validateToken(token.split(' ')[1]);
+    private async extractTokenValue(token: string, authService: AuthService) {
+        const decode = await authService.validateToken(token.split(' ')[1]);
         return decode;
     }
 }

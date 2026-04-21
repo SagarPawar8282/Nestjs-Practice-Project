@@ -10,14 +10,29 @@ export class AuthService {
     private userService: UsersService) { }
 
   async validateToken(token: string) {
-    return this.jwtService.verifyAsync(token);
+    return await this.jwtService.verifyAsync(token);
   }
 
   async decodeToken(token: string) {
     return this.jwtService.decode(token);
   }
 
-  async customerRedistration(Cust_Reg_Body) {
+  async login(loginBody) {
+    if (!loginBody.email || !loginBody.password) {
+      return false;
+    }
+
+    const user = await this.userService.login(loginBody);
+
+    if(!user){
+      return 'user credintial false or user not exits';
+    }
+    const payload = { id: user.users.id, email: user.users.email, role: user.users.roles.name };
+    return { access_token: await this.jwtService.signAsync(payload) };
+
+  }
+
+  async customerRegistration(Cust_Reg_Body) {
 
     const isEmailAlreadyUsed = this.userService.isEmailAlreadyInUse(Cust_Reg_Body.email);
 
@@ -33,29 +48,27 @@ export class AuthService {
     return { access_token: await this.jwtService.signAsync(payload) };
   }
 
-  async customerLogin(loginBody) {
-    if (!loginBody.email || !loginBody.password) {
-      return false;
+  
+  async storeRegistration(store_reg_body){
+    const isEmailAlreadyUsed = this.userService.isEmailAlreadyInUse(store_reg_body.email);
+
+    if(!isEmailAlreadyUsed){
+      return 'email is already used';
     }
 
-    const isRegisterUser = await this.userService.isCustomerExits(loginBody.email);
+    const hashedPassword = await bcrypt.hash(store_reg_body.password,10);
 
-    if (!isRegisterUser) {
-      return false;
+    const user = await this.userService.registerStore({...store_reg_body,password:hashedPassword});
+
+    if(!user){
+      return 'user not found';
     }
 
-    const match = await bcrypt.compare(loginBody.password, isRegisterUser.password);
-
-    if (!match) {
-      return "bcrypt error"
-    }
-
-    const customerDetails = await this.userService.getCustomerDetails(isRegisterUser.id);
-    
-    const payload = { id: customerDetails.users.id, email: customerDetails.users.email, role: customerDetails.users.roles.name };
-    return { access_token: await this.jwtService.signAsync(payload) };
-
+    console.log(user);
+    const payload = {id:user.users.id, email:user.users.email, role:user.users.roles.name};
+    return {access_token: await this.jwtService.signAsync(payload)};
   }
+
 
 }
 
