@@ -15,6 +15,6 @@ import { ProductPersistenceModule } from 'src/apis/product-persistence/product-p
   ],
   controllers: [],
   providers: [QueueProcessorService,QueueProcessor,],
-  exports: [QueueProcessorService]
+  exports: [QueueProcessorService,BullModule]
 })
 export class QueueProcessorModule { }
