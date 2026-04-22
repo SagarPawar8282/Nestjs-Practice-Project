@@ -1,4 +1,4 @@
-import { IsDefined, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsDefined, IsNotEmpty, IsNumber, IsObject, IsString } from "class-validator";
 
 export class AddSingleProductDto{
     @IsString()
@@ -23,4 +23,17 @@ export class AddSingleProductDto{
     @IsNumber()
     @IsNotEmpty()
     storeId:number;
+}
+
+
+export class BulkAddProductDto{
+    
+    @IsNumber()
+    @IsNotEmpty()
+    @IsDefined()
+    storeId:number;
+
+    @IsArray()
+    @ArrayNotEmpty()
+    productDetails;
 }

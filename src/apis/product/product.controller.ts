@@ -1,13 +1,24 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ProductService } from './product.service';
-import { AddSingleProductDto } from './product.dto';
+import { AddSingleProductDto, BulkAddProductDto } from './product.dto';
+import { Roles } from 'src/common/decorator/role.decorator';
+import { RoleGuard } from 'src/common/decorator/role-guard.guard';
 
 @Controller('Product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @UseGuards(RoleGuard)
+  @Roles('Store')
   @Post('add-product')
   async addproduct(@Body()product:AddSingleProductDto){
     return this.productService.addSingleProduct(product);
+  }
+
+  @UseGuards(RoleGuard)
+  @Roles('Store')
+  @Post('bulk-add-product')
+  async bulkAddProduct(@Body()bulkProductDetails:BulkAddProductDto){
+    return this.productService.BulkAddProduct(bulkProductDetails);
   }
 }

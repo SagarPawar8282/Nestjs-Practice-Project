@@ -5,7 +5,7 @@ import { StoreService } from './store.service';
 export class StoreController {
   constructor(private readonly storeService: StoreService) {}
 
-  @Post()
+  @Post('add')
   create(@Body() createStoreDto) {
     return this.storeService.create();
   }
