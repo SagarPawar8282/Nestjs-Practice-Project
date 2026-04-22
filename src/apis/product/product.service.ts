@@ -37,4 +37,16 @@ export class ProductService {
             return err.message
         }
     }
+
+    async deleteProductByProductId(storeId:number,productName:string){
+        console.log(storeId,productName);
+        const record= await this.productRepository.findOne({where:{storeId:storeId,name:productName}});
+        return record;
+        console.log(record);
+        if(!record){
+            return 'no record found';
+        }
+        await record.destroy();
+        return `deleted`;
+    }
 }

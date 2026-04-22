@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { AddSingleProductDto, BulkAddProductDto } from './product.dto';
 import { Roles } from 'src/common/decorator/role.decorator';
@@ -20,5 +20,12 @@ export class ProductController {
   @Post('bulk-add-product')
   async bulkAddProduct(@Body()bulkProductDetails:BulkAddProductDto){
     return this.productService.BulkAddProduct(bulkProductDetails);
+  }
+
+  @UseGuards(RoleGuard)
+  @Roles('Store')
+  @Delete('delete-product')
+  async deleteProductByProductId(@Query('storeId',ParseIntPipe)storeId:number,@Query('productName')productName:string){
+    return this.productService.deleteProductByProductId(storeId,productName);
   }
 }
