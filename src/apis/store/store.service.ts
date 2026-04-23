@@ -9,23 +9,23 @@ export class StoreService {
 
   constructor(@Inject(STORE_REPOSITORY)private readonly storeRespository:typeof Store){}
 
-  create() {
+  async create() {
     return 'This action adds a new store';
   }
 
-  findAll() {
+  async findAll() {
     return `This action returns all store`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} store`;
+  async findOne(id: number) {
+    return await this.storeRespository.findOne({where:{id}});
   }
 
-  update() {
+  async update() {
     return `This action updates a # store`;
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return `This action removes a #${id} store`;
   }
 

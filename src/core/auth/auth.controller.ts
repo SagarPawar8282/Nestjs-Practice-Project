@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CustomerRegisterDto, LoginDto, storeRegisterDto } from './auth.dto';
 import { RoleGuard } from 'src/common/decorator/role-guard.guard';
 import { Roles } from 'src/common/decorator/role.decorator';
+//import { Logging } from 'src/common/interceptors/logging.interceptor';
 
+//@UseInterceptors(Logging)
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

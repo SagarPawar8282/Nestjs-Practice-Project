@@ -1,10 +1,10 @@
-import { Body, Controller, Delete, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { AddSingleProductDto, BulkAddProductDto } from './product.dto';
 import { Roles } from 'src/common/decorator/role.decorator';
 import { RoleGuard } from 'src/common/decorator/role-guard.guard';
 
-@Controller('Product')
+@Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
@@ -27,5 +27,10 @@ export class ProductController {
   @Delete('delete-product')
   async deleteProductByProductId(@Query('storeId',ParseIntPipe)storeId:number,@Query('productName')productName:string){
     return this.productService.deleteProductByProductId(storeId,productName);
+  }
+
+  @Get(':id')
+  async findOne(@Param ('id',ParseIntPipe)id :number){
+    return this.productService.findOne(id);
   }
 }

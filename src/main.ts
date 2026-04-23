@@ -5,6 +5,9 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { canContextService } from './core/auth/context/context.service';
 import helmet from 'helmet';
 import { ValidationPipe } from '@nestjs/common';
+import { AdvanceLoggingResponse } from './common/interceptors/advanceLoggingResponse.interceptor';
+//import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+//import { LoggingResponse } from './common/interceptors/loggingReponse.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -12,6 +15,7 @@ async function bootstrap() {
   app.setGlobalPrefix('/v1');
   app.enableCors();
 
+  app.useGlobalInterceptors(new AdvanceLoggingResponse());
   app.useGlobalGuards(new CanAuthGuard());
 
   app.useGlobalPipes(

@@ -49,4 +49,8 @@ export class ProductService {
         await record.destroy();
         return `deleted`;
     }
+
+    async findOne(id:number){
+        return this.productRepository.findOne({where:{id:id}});
+    }
 }
