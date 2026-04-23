@@ -6,6 +6,7 @@ import { canContextService } from './core/auth/context/context.service';
 import helmet from 'helmet';
 import { ValidationPipe } from '@nestjs/common';
 import { AdvanceLoggingResponse } from './common/interceptors/advanceLoggingResponse.interceptor';
+import { loggerMiddlewares } from './common/middleware/logger.middleware';
 //import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 //import { LoggingResponse } from './common/interceptors/loggingReponse.interceptor';
 
@@ -14,6 +15,8 @@ async function bootstrap() {
 
   app.setGlobalPrefix('/v1');
   app.enableCors();
+
+  app.use(loggerMiddlewares);
 
   app.useGlobalInterceptors(new AdvanceLoggingResponse());
   app.useGlobalGuards(new CanAuthGuard());

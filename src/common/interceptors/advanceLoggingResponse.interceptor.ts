@@ -4,7 +4,7 @@ import { map, Observable, tap } from "rxjs";
 @Injectable()
 export class AdvanceLoggingResponse implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
-        console.log('advanced logging response');
+        console.log('advanced logging response interceptor');
         const req = context.switchToHttp().getRequest();
 
         const start = Date.now();
