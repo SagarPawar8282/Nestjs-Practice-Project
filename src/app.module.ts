@@ -5,6 +5,8 @@ import { ApisModules } from './apis/apis.module';
 import { CommonModule } from './common/common.modules';
 import { BullModule } from '@nestjs/bull';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -13,14 +15,25 @@ import { ScheduleModule } from '@nestjs/schedule';
     ApisModules,
     CommonModule,
     BullModule.forRoot({
-      redis:{
-        host:"localhost",
-        port:6379
+      redis: {
+        host: "localhost",
+        port: 6379
       }
     }),
     ScheduleModule.forRoot({}),
+    ThrottlerModule.forRoot(
+      [{
+        ttl: 30000,
+        limit: 20,
+      }]
+    ),
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard
+    }
+  ],
 })
-export class AppModule {}
+export class AppModule { }
