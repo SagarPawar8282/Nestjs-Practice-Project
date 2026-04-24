@@ -7,6 +7,8 @@ import { BullModule } from '@nestjs/bull';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { CacheModule } from '@nestjs/cache-manager';
+import { redisStore } from 'cache-manager-redis-store';
 
 @Module({
   imports: [
@@ -27,6 +29,13 @@ import { APP_GUARD } from '@nestjs/core';
         limit: 20,
       }]
     ),
+    CacheModule.register({
+      isGlobal:true,
+      ttl:10 ,   //ttl is Cache auto expires after time small ttl --> frequelnty changing data , large ttl --> static data 
+      store:redisStore,
+      host:'localhost',
+      port:6379,
+    })
   ],
   controllers: [],
   providers: [
