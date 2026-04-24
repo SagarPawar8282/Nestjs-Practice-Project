@@ -22,13 +22,6 @@ export class ProductController {
     return this.productService.BulkAddProduct(bulkProductDetails);
   }
 
-  @UseGuards(RoleGuard)
-  @Roles('Store')
-  @Delete('delete-product')
-  async deleteProductByProductId(@Query('storeId',ParseIntPipe)storeId:number,@Query('productName')productName:string){
-    return this.productService.deleteProductByProductId(storeId,productName);
-  }
-
   @Get(':id')
   async findOne(@Param ('id',ParseIntPipe)id :number){
     return this.productService.findOne(id);

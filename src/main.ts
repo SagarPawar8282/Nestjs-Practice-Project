@@ -34,23 +34,23 @@ async function bootstrap() {
     })
   );
 
-  
+
   const serverAdapter = new ExpressAdapter();
   serverAdapter.setBasePath('/admin/queues',);
 
   //app.use('/admin/queue',serverAdapter.getRouter());
   //bull board for queue tracking
-  const queue=app.get<Queue>(getQueueToken('bulk-add-product'));
- 
+  const queue = app.get<Queue>(getQueueToken('bulk-add-product'));
+
   createBullBoard({
-    queues:[new BullAdapter(queue)],
+    queues: [new BullAdapter(queue)],
     serverAdapter
   });
   app
-  .getHttpAdapter()
-  .getInstance()
-  .use('/admin/queues', serverAdapter.getRouter());
- 
+    .getHttpAdapter()
+    .getInstance()
+    .use('/admin/queues', serverAdapter.getRouter());
+
   app.use(helmet()); //Helmet is a middleware that secures Express/NestJS apps by setting HTTP headers like CSP, HSTS, and X-Frame-Options to protect against XSS, clickjacking, and other attacks.
   canContextService.init(app)
   await app.listen(process.env.PORT ?? 3000);

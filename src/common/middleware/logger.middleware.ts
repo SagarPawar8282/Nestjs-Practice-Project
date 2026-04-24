@@ -1,9 +1,11 @@
 import { Injectable, NestMiddleware } from "@nestjs/common";
 import { NextFunction } from "express";
+import {v4 as uuidv4} from 'uuid'
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware{
     use(req: any, res: any, next: () => void) {
+        req.requestId = uuidv4();
 
         const start = Date.now();
 
@@ -11,7 +13,7 @@ export class LoggerMiddleware implements NestMiddleware{
 
         res.on('finish',()=>{
             const end = Date.now();
-            console.log(`method : ${req.method}, url : ${req.url}, ${new Date().toDateString()}`)
+            //console.log(`method : ${req.method}, url : ${req.url}, ${new Date().toDateString()}`)
         })
         next();                 //If you don’t call next()--> request will hang forever
     }

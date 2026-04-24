@@ -1,10 +1,11 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
 import { map, Observable, tap } from "rxjs";
+import { logger } from "../logger/logger";
 
 @Injectable()
 export class AdvanceLoggingResponse implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
-        console.log('advanced logging response interceptor');
+        //console.log('advanced logging response interceptor');
         const req = context.switchToHttp().getRequest();
 
         const start = Date.now();
@@ -28,9 +29,11 @@ export class AdvanceLoggingResponse implements NestInterceptor {
         if (method === 'UPDATE') { message = 'Updated Successful' }
         if (method === 'DELETE') { message = 'Deleted Successful' }
 
+        logger.info(`Logger :- method: ${method} | url: ${req.url}`);
+
         return next.handle().pipe(
             tap(
-                () => console.log(`[${req.method}] ${req.url} - ${Date.now() - start}ms`)
+                () => console.log(`Interceptor hit`)
             ),
             map(
                 (data) => {
@@ -38,6 +41,7 @@ export class AdvanceLoggingResponse implements NestInterceptor {
                         return data;
                     }
                     return {
+                        requestId:req.requestId,
                         success: true,
                         data: data,
                         message: message
