@@ -33,4 +33,5 @@ export class ProductController {
   async findOne(@Param ('id',ParseIntPipe)id :number){
     return this.productService.findOne(id);
   }
+  
 }

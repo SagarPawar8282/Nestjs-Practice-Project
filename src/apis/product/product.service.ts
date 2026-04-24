@@ -32,25 +32,37 @@ export class ProductService {
             }
 
             await this.queueService.bulkAddProductJob(jobArray);
-            return "add the product are added into queue.";
+            return "Product are successfully added into the Queue";
         } catch (err) {
             return err.message
         }
     }
 
-    async deleteProductByProductId(storeId:number,productName:string){
-        console.log(storeId,productName);
-        const record= await this.productRepository.findOne({where:{storeId:storeId,name:productName}});
-        return record;
+    async deleteProductByProductId(storeId: number, productName: string) {
+        console.log(storeId, productName);
+        const record = await this.productRepository.findOne({ where: { storeId: storeId, name: productName } });
+
         console.log(record);
-        if(!record){
-            return 'no record found';
+        if (!record) {
+            return `no product record found with id: ${storeId} and name: ${productName}`;
         }
         await record.destroy();
         return `deleted`;
     }
 
-    async findOne(id:number){
-        return this.productRepository.findOne({where:{id:id}});
+    async findOne(id: number) {
+        return this.productRepository.findOne({ where: { id: id } });
+    }
+
+    async getJobStatus(id: number) {
+        return await this.queueService.getJobstatus(id);
+    }
+
+    async findAllProductUnderProductCategory(productCategory:string){
+        const name = productCategory;
+        console.log(`"${name}"`, name.length);
+        const record=await this.productRepository.findAll({where:{name:productCategory.trim()}});
+        console.log("records: "+record.length);
+        return record;
     }
 }

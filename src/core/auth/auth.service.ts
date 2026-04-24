@@ -2,12 +2,14 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/apis/users/users.service';
 import * as bcrypt from 'bcrypt';
+import { QueueProcessorService } from 'src/common/services/queue-processor/queue-processor.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
-    private userService: UsersService) { }
+    private userService: UsersService,
+    private queueService:QueueProcessorService) { }
 
   async validateToken(token: string) {
     return await this.jwtService.verifyAsync(token);
@@ -44,6 +46,7 @@ export class AuthService {
 
     const user = await this.userService.registerCustomer({ ...Cust_Reg_Body, password: hashedPassword });
 
+    await this.queueService.emailJob([Cust_Reg_Body.email]);
     const payload = { id: user.users.id, email: user.users.email, role: user.users.roles.name };
     return { access_token: await this.jwtService.signAsync(payload) };
   }

@@ -8,7 +8,9 @@ import { ProductPersistenceModule } from 'src/apis/product-persistence/product-p
   imports: [
     BullModule.registerQueue(
       {
-        name: 'bulk-add-product'
+        name: 'bulk-add-product',
+      },{
+        name:'email-queue'
       }
     ),
     ProductPersistenceModule  
