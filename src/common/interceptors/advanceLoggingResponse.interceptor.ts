@@ -29,7 +29,7 @@ export class AdvanceLoggingResponse implements NestInterceptor {
         if (method === 'UPDATE') { message = 'Updated Successful' }
         if (method === 'DELETE') { message = 'Deleted Successful' }
 
-        logger.info(`Logger :- method: ${method} | url: ${req.url}`);
+        logger.info(`Logger :- requestId: ${req.requestId} | method: ${method} | url: ${req.url}`);
 
         return next.handle().pipe(
             tap(

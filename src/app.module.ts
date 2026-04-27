@@ -29,12 +29,24 @@ import { redisStore } from 'cache-manager-redis-store';
         limit: 20,
       }]
     ),
-    CacheModule.register({
-      isGlobal:true,
+    CacheModule.registerAsync({
+      isGlobal: true,
+
+      /*
       ttl:10 ,   //ttl is Cache auto expires after time small ttl --> frequelnty changing data , large ttl --> static data 
       store:redisStore,
       host:'localhost',
       port:6379,
+      */
+      useFactory: async () => {
+        return {
+          store: await redisStore({
+            host: 'localhost',
+            port: 6379,
+            ttl: 10000,
+          }),
+        };
+      },
     })
   ],
   controllers: [],
