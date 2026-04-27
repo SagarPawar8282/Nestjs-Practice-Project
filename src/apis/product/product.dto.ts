@@ -1,3 +1,4 @@
+import { PartialType } from "@nestjs/mapped-types";
 import { ArrayNotEmpty, IsArray, IsDefined, IsNotEmpty, IsNumber, IsObject, IsString } from "class-validator";
 
 export class AddSingleProductDto{
@@ -37,3 +38,5 @@ export class BulkAddProductDto{
     @ArrayNotEmpty()
     productDetails;
 }
+
+export class UpdateProductDto extends PartialType(AddSingleProductDto){}

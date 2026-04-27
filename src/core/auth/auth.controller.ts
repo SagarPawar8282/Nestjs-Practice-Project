@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CustomerRegisterDto, LoginDto, storeRegisterDto } from './auth.dto';
+import { CustomerRegisterDto, LoginDto, StoreRegisterDto } from './auth.dto';
 import { RoleGuard } from 'src/common/decorator/role-guard.guard';
 import { Roles } from 'src/common/decorator/role.decorator';
 //import { Logging } from 'src/common/interceptors/logging.interceptor';
@@ -21,7 +21,7 @@ export class AuthController {
   }
 
   @Post('newStore')
-  async newStoreRegistration(@Body()body:storeRegisterDto){
+  async newStoreRegistration(@Body()body:StoreRegisterDto){
     return this.authService.storeRegistration(body);
   }
 

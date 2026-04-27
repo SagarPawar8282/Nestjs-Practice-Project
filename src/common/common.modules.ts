@@ -1,7 +1,7 @@
 //reuse modules
 
 import { Module } from "@nestjs/common";
-import { QueueProcessorModule } from "./services/queue-processor/queue-processor.module";
+import { QueueProcessorModule } from "../core/queue-processor/queue-processor.module";
 import { CronModule } from "./cron/cron.module";
 
 @Module({

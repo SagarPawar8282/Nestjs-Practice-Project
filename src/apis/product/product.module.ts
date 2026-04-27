@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { ProductController } from './product.controller';
 //import { productRepositoryProvider } from './product.repository';
-import { QueueProcessorModule } from 'src/common/services/queue-processor/queue-processor.module';
+import { QueueProcessorModule } from 'src/core/queue-processor/queue-processor.module';
 import { ProductPersistenceModule } from '../product-persistence/product-persistence.module';
 
 @Module({

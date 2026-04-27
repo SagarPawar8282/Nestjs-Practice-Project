@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { QueueCleanUpService } from "./cron.service";
-import { QueueProcessorModule } from "../services/queue-processor/queue-processor.module";
+import { QueueProcessorModule } from "../../core/queue-processor/queue-processor.module";
 
 @Module({
     imports:[QueueProcessorModule],

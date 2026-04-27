@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 // import { PRODUCT_REPOSITORY } from './product.repository';
 // import { Product } from './product.model';
-import { QueueProcessorService } from 'src/common/services/queue-processor/queue-processor.service';
+import { QueueProcessorService } from 'src/core/queue-processor/queue-processor.service';
 import { ProductPreristenceModel } from '../product-persistence/product-persistence.model';
 import { PRODUCT_PERSISTENCE_REPOSITORY } from '../product-persistence/product-persistence.repository';
 import { logger } from 'src/common/logger/logger';

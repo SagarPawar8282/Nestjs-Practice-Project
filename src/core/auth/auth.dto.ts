@@ -1,10 +1,8 @@
 import { IsBoolean, IsEmail, IsNotEmpty, IsString, IsStrongPassword } from "class-validator";
-import { IsNumeric } from "sequelize-typescript";
 
-export class LoginDto {
-
+export class EmailPasswordDto{
+    @IsEmail()
     @IsNotEmpty()
-    @IsString()
     email: string;
 
     @IsNotEmpty()
@@ -12,20 +10,7 @@ export class LoginDto {
     password: string;
 }
 
-export class LoginResponseDto {
-    token: string;
-    type: 'Bearer';
-}
-
-export class CustomerRegisterDto{
-
-    @IsEmail()
-    @IsNotEmpty()
-    email:string;
-
-    @IsStrongPassword()
-    @IsNotEmpty()
-    password:string;
+export class BaseDto extends EmailPasswordDto{
 
     @IsNotEmpty()
     @IsString()
@@ -34,29 +19,21 @@ export class CustomerRegisterDto{
     @IsString()
     @IsNotEmpty()
     address:string;
+
+}
+export class LoginDto extends EmailPasswordDto {
+
+}
+
+
+export class CustomerRegisterDto extends BaseDto{
 
     @IsString()
     @IsNotEmpty()
     phoneNumber:string;
 }
 
-export class storeRegisterDto{
-
-    @IsEmail()
-    @IsNotEmpty()
-    email:string;
-
-    @IsStrongPassword()
-    @IsNotEmpty()
-    password:string;
-
-    @IsString()
-    @IsNotEmpty()
-    name:string;
-
-    @IsString()
-    @IsNotEmpty()
-    address:string;
+export class StoreRegisterDto extends BaseDto{
 
     @IsString()
     @IsNotEmpty()

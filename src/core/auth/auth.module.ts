@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from 'src/apis/users/users.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { QueueProcessorModule } from 'src/common/services/queue-processor/queue-processor.module';
+import { QueueProcessorModule } from 'src/core/queue-processor/queue-processor.module';
 
 @Module({
   imports: [
