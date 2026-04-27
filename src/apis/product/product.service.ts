@@ -43,16 +43,23 @@ export class ProductService {
 
     async findOne(id: number) {
         try {
-            const cache_key = `product:${id}`;
+
+            const cache_key = `Cache:product:${id}`;
+            
+            try{
             const cached = await this.cacheManager.get(cache_key);
 
             if (cached) {
                 console.log("from cache");
                 return cached;
             }
+        }catch(err){
+            logger.warn('Cache unavailable');   
+        }
             const product = await this.productRepository.findOne({ where: { id: id } });
 
-            await this.cacheManager.set(cache_key, product, 10000);
+            const response = await this.cacheManager.set(cache_key, product);
+            // console.log("cache response: "+response.dataValues.name);
             console.log("from db");
             return product;
         } catch (err) {
@@ -74,5 +81,27 @@ export class ProductService {
             logger.info(`Logger :- Error: ${err.message}`);
             throw err;
         }
+    }
+
+    async updateProductData(storeIdid, productData) {
+        const cache_key = `product:${productData.id}`;
+
+        const productRow = await this.productRepository.update(
+            {
+                name: productData?.name,
+                productCategory: productData?.productCategory,
+                description: productData?.description,
+                price: productData?.price,
+                stock: productData?.stock,
+            },
+            { where: { storeId: storeIdid, id: productData.id } });
+        const cached = await this.cacheManager.get(cache_key);  //sequelize return number of product updated not product data 
+
+        if (productRow) {
+            const product = await this.productRepository.findOne({ where: { id: productData.id } });
+            await this.cacheManager.set(cache_key, product);
+            return product;
+        }
+        return null
     }
 }

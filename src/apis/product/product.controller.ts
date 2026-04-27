@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { AddSingleProductDto, BulkAddProductDto } from './product.dto';
 import { Roles } from 'src/common/decorator/role.decorator';
@@ -25,6 +25,11 @@ export class ProductController {
   @Get(':id')
   async findOne(@Param ('id',ParseIntPipe)id :number){
     return this.productService.findOne(id);
+  }
+
+  @Put('update-product/:id')
+  async updateProductData(@Param('id',ParseIntPipe)id:number,@Body()productData:Object){
+    return this.productService.updateProductData(id,productData);
   }
   
 }

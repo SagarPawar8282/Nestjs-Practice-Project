@@ -1,3 +1,5 @@
+//buisness module here all the logic reside here
+
 import { Module } from "@nestjs/common";
 import { CustomerModule } from "./customer/customer.module";
 import { RolesModule } from './roles/roles.module';

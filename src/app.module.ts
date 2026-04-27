@@ -18,9 +18,14 @@ import { redisStore } from 'cache-manager-redis-store';
     CommonModule,
     BullModule.forRoot({
       redis: {
-        host: "localhost",
-        port: 6379
-      }
+        host: process.env.REDIS_HOST,
+        port: Number(process.env.REDIS_PORT),
+        retryStrategy(times) {
+          return Math.min(times*50,2000)    
+        },
+        connectTimeout:10000            //failed fast if redis unavailable
+      },
+      prefix:'Queue'
     }),
     ScheduleModule.forRoot({}),
     ThrottlerModule.forRoot(
@@ -41,8 +46,8 @@ import { redisStore } from 'cache-manager-redis-store';
       useFactory: async () => {
         return {
           store: await redisStore({
-            host: 'localhost',
-            port: 6379,
+            host: process.env.REDIS_HOST,
+            port: process.env.REDIS_PORT,
             ttl: 10000,
           }),
         };
