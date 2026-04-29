@@ -4,10 +4,15 @@ import { AuthController } from './auth.controller';
 import { UsersModule } from 'src/apis/users/users.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { QueueProcessorModule } from 'src/core/queue-processor/queue-processor.module';
+import { StoreModule } from 'src/apis/store/store.module';
+import { CustomerModule } from 'src/apis/customer/customer.module';
 
 @Module({
   imports: [
-    UsersModule,QueueProcessorModule,
+    UsersModule,
+    QueueProcessorModule,
+    StoreModule,
+    CustomerModule,
     JwtModule.register({
       global: true,
       secret:'abc',

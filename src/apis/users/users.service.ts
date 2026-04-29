@@ -1,34 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { USER_REPOSITORY } from './user.repository';
 import { Users } from './users.model';
-import { CustomerService } from '../customer/customer.service';
-import { JwtService } from '@nestjs/jwt';
-import { StoreService } from '../store/store.service';
-import * as bcrypt from 'bcrypt';
-
 @Injectable()
 export class UsersService {
 
   constructor(
-    @Inject(USER_REPOSITORY) private readonly userRepository: typeof Users,
-    private customerService: CustomerService, private storeService:StoreService,
-    private jwtService: JwtService) { }
-
-  create(createUserDto) {
-    return 'This action adds a new user';
-  }
-
-  findAll() {
-    return `This action returns all users`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update() {
-    return `This action updates a # user`;
-  }
+    @Inject(USER_REPOSITORY) private readonly userRepository: typeof Users) { }
 
   async isEmailAlreadyInUse(email: string): Promise<Boolean> {
     const emailExits = await this.userRepository.findOne({ where: { email: email } });
@@ -55,30 +32,12 @@ export class UsersService {
       const roleId = 2;
       const userInfo = { email: registrationInfo.email, password: registrationInfo.password };
       const userRegister = await this.createUser(userInfo, roleId)
-      // const userRegister = await this.userRepository.create({
-      //   email: registrationInfo.email,
-      //   password: registrationInfo.password,
-      //   roleId: roleId
-      // });
+      
 
       if (!userRegister) {
-        return 'unknow error'
+        return null;
       }
-      const customerInfo = {
-        name: registrationInfo.name,
-        address: registrationInfo.address,
-        phoneNumber: registrationInfo.phoneNumber,
-        userId: userRegister.id
-      }
-      const CustRegister = await this.customerService.customerRegistration(customerInfo);
-
-      if (!CustRegister) {
-        return 'failed to register customer';
-      }
-
-      const customer = await this.customerService.getNewCustomerDetailsByCustomerId(CustRegister.id);
-      return customer;
-
+      return userRegister;
 
     } catch (err) {
       return err.message;
@@ -97,50 +56,11 @@ export class UsersService {
         return 'unknown error '
       }
 
-      const StoreInfo = {
-        name:registrationInfo.name,
-        address: registrationInfo.address,
-        storeType:registrationInfo.storeType,
-        isOpen:registrationInfo.isOpen,
-        userId:userRegister.id
-      }
-
-      const storeRegister = await this.storeService.storeRegistration(StoreInfo);
-
-      if(!storeRegister){
-        return 'failed to register store';
-      }
-
-      const store= await this.storeService.getStoreDetailsByStoreId(storeRegister.id);
-      return store;
-       
+      return userRegister;
+     
     } catch (error) {
       return error.message
     }
   }
 
-  async login(loginBody){
-    const isRegisterUser = await this.isEmailExits(loginBody.email);
-
-    if(!isRegisterUser){
-      return 'user with email is not register';
-    }
-
-    const match = await bcrypt.compare(loginBody.password,isRegisterUser.password);
-    
-    if(!match){
-      return 'incorrect password';
-    }
-
-    let user;
-    if(isRegisterUser.roleId === 2){
-      user = await this.customerService.getCustomerDetailsByUserId(isRegisterUser.id);
-    }
-    else if(isRegisterUser.roleId === 3){
-      user = await this.storeService.getStoreDetailsByUserId(isRegisterUser.id);
-    }else {
-      return null;
-    }
-    return user;
-  }
 }
