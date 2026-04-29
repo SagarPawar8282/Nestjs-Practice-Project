@@ -1,5 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
 import { StoreService } from './store.service';
+import { RoleGuard } from 'src/common/decorator/role-guard.guard';
+import { Roles } from 'src/common/decorator/role.decorator';
 
 @Controller('store')
 export class StoreController {
@@ -30,9 +32,11 @@ export class StoreController {
     return this.storeService.update();
   }
 
+  @UseGuards(RoleGuard)
+  @Roles('Admin')
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.storeService.remove(+id);
+  remove(@Param('id',ParseIntPipe) id: number) {
+    //return this.storeService.deleteStore(id);
   }
 
   //@Post('add-bulk-product')

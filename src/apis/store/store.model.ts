@@ -1,5 +1,6 @@
-import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, HasOne, Model, Table } from "sequelize-typescript";
 import { Users } from "../users/users.model";
+import { ProductPreristenceModel } from "../product-persistence/product-persistence.model";
 
 @Table({tableName:'store',timestamps:true})
 export class Store extends Model<Store> {
@@ -40,9 +41,15 @@ export class Store extends Model<Store> {
     @ForeignKey(() => Users)
     @Column({
         type: DataType.INTEGER,
-        field: 'user_id'
+        field: 'user_id',
+        allowNull:false,
+        onDelete:'CASCADE',
+        onUpdate:'CASCADE'
     })
     userId: number;
     @BelongsTo(() => Users)
-    users: Users
+    users: Users;
+
+    @HasOne(()=>ProductPreristenceModel)
+    product:ProductPreristenceModel
 }

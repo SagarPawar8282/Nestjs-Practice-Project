@@ -63,7 +63,7 @@ export class ProductService {
             console.log("from db");
             return product;
         } catch (err) {
-            logger.info(`Logger :- Error: ${err.message}`);
+            logger.error(`Logger :- Error: ${err.message}`);
             throw err;
         }
     }
@@ -78,7 +78,7 @@ export class ProductService {
             const record = await this.productRepository.findAll({ where: { name: productCategory.trim() } });
             return record;
         } catch (err) {
-            logger.info(`Logger :- Error: ${err.message}`);
+            logger.error(`Logger :- Error: ${err.message} | action: find all production under product category`);
             throw err;
         }
     }

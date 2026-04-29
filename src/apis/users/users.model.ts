@@ -1,5 +1,8 @@
-import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, HasOne, Model, Table } from "sequelize-typescript";
 import { Roles } from "../roles/roles.model";
+import { Store } from "../store/store.model";
+import { Admin } from "../admin/admin.model";
+import { Customer } from "../customer/customer.model";
 
 @Table({ tableName: 'users', timestamps: true })
 export class Users extends Model<Users> {
@@ -28,10 +31,18 @@ export class Users extends Model<Users> {
     @ForeignKey(() => Roles)
     @Column({
         type: DataType.INTEGER,
-        field: 'role_id'
+        field: 'role_id',
     })
     roleId: number;
     @BelongsTo(() => Roles)
     roles: Roles
 
+    @HasOne(()=>Store)
+    store:Store;
+
+    @HasOne(()=>Admin)
+    admin:Admin;
+
+    @HasOne(()=>Customer)
+    customer:Customer;
 }

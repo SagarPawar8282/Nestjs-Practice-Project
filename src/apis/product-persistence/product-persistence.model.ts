@@ -46,7 +46,10 @@ export class ProductPreristenceModel extends Model<ProductPreristenceModel>{
     @ForeignKey(()=>Store)
     @Column({
         type:DataType.INTEGER,
-        field:'store_id'
+        field:'store_id',
+        allowNull:false,
+        onDelete:'CASCADE',
+        onUpdate:'CASCADE'
     })
     storeId:number;
     @BelongsTo(()=>Store)
