@@ -21,7 +21,7 @@ export class ProductPreristenceModel extends Model<ProductPreristenceModel>{
 
     @Column({
         type:DataType.STRING,
-        field:'product-category'
+        field:'product_category'
     })
     productCategory:string;
     

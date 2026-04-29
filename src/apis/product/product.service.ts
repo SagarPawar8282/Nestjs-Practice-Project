@@ -7,12 +7,14 @@ import { PRODUCT_PERSISTENCE_REPOSITORY } from '../product-persistence/product-p
 import { logger } from 'src/common/logger/logger';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { QueryService } from 'src/core/query/query.service';
+import { Query } from 'src/common/services/query/query';
 
 @Injectable()
 export class ProductService {
     constructor(
         @Inject(PRODUCT_PERSISTENCE_REPOSITORY) private readonly productRepository: typeof ProductPreristenceModel,
-        private queueService: QueueProcessorService,
+        private queueService: QueueProcessorService, private queryService: QueryService,
         @Inject(CACHE_MANAGER) private cacheManager: Cache) { }
 
     async addSingleProduct(productDetails) {
@@ -45,17 +47,17 @@ export class ProductService {
         try {
 
             const cache_key = `Cache:product:${id}`;
-            
-            try{
-            const cached = await this.cacheManager.get(cache_key);
 
-            if (cached) {
-                console.log("from cache");
-                return cached;
+            try {
+                const cached = await this.cacheManager.get(cache_key);
+
+                if (cached) {
+                    console.log("from cache");
+                    return cached;
+                }
+            } catch (err) {
+                logger.warn('Cache unavailable');
             }
-        }catch(err){
-            logger.warn('Cache unavailable');   
-        }
             const product = await this.productRepository.findOne({ where: { id: id } });
 
             const response = await this.cacheManager.set(cache_key, product);
@@ -103,5 +105,25 @@ export class ProductService {
             return product;
         }
         return null
+    }
+
+    async getAllProductUnderStore(storeId: number) {
+        return await this.productRepository.findAll({ where: { storeId: storeId } })
+    }
+
+    async getAllProductUnderProductCategory(productCategory: string) {
+        return await this.productRepository.findAll({ where: { productCategory: productCategory } });
+    }
+
+    async getAllProductCategory(productCategory: string) {
+        const categories = await this.queryService.executeQuery(Query.getAllProductCategory(productCategory), null);
+
+        //let categoryArray:Map<number,number>= new Map();
+        let categoryArray = [] ;
+        if (Array.isArray(categories)) {
+            categories.map((r) => categoryArray.push(r.product_category));
+        }
+
+        return categoryArray;
     }
 }

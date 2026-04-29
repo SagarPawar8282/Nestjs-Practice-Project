@@ -22,14 +22,34 @@ export class ProductController {
     return this.productService.BulkAddProduct(bulkProductDetails);
   }
 
-  @Get(':id')
-  async findOne(@Param ('id',ParseIntPipe)id :number){
-    return this.productService.findOne(id);
-  }
-
   @Put('update-product/:id')
   async updateProductData(@Param('id',ParseIntPipe)id:number,@Body()productData:Object){
     return this.productService.updateProductData(id,productData);
   }
   
+  @UseGuards(RoleGuard)
+  @Roles('Store','Customer')
+  @Get('all-product-under-store')
+  async getAllProductUnderStore(@Query('storeId',ParseIntPipe)storeId:number){
+    return this.productService.getAllProductUnderStore(storeId);
+  }
+
+  @UseGuards(RoleGuard)
+  @Roles('Customer')
+  @Get('all-product-under-product-category')
+  async getAllProductUnderProductCategory(@Query('productCategory')productcategory:string){
+    console.log("product Category: "+ productcategory);
+    console.log("product Category length: "+productcategory.length);
+    return this.productService.getAllProductUnderProductCategory(productcategory);
+  }
+
+  @Get('get-all-product-category')
+  async getAllProductCategory(@Query('productCategory')productCategory:string){
+    return this.productService.getAllProductCategory(productCategory);
+  }
+
+  @Get(':id')
+  async findOne(@Param ('id',ParseIntPipe)id :number){
+    return this.productService.findOne(id);
+  }
 }
