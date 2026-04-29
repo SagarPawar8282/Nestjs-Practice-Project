@@ -6,6 +6,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { QueueProcessorModule } from 'src/core/queue-processor/queue-processor.module';
 import { StoreModule } from 'src/apis/store/store.module';
 import { CustomerModule } from 'src/apis/customer/customer.module';
+import { AdminModule } from 'src/apis/admin/admin.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { CustomerModule } from 'src/apis/customer/customer.module';
     QueueProcessorModule,
     StoreModule,
     CustomerModule,
+    AdminModule,
     JwtModule.register({
       global: true,
       secret:'abc',

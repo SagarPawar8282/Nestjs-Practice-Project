@@ -7,13 +7,8 @@ import { Roles } from 'src/common/decorator/role.decorator';
 export class StoreController {
   constructor(private readonly storeService: StoreService) {}
 
-  @Post('add')
-  create(@Body() createStoreDto) {
-    return this.storeService.create();
-  }
-
   @Get('get-all-product-by-caterory')
-  findAll(@Query('product-category')productCategory:string) {
+  async findAll(@Query('product-category')productCategory:string) {
     return this.storeService.findAllProductUnderProductCate(productCategory);
   }
 
@@ -23,21 +18,15 @@ export class StoreController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return this.storeService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStoreDto) {
-    return this.storeService.update();
   }
 
   @UseGuards(RoleGuard)
   @Roles('Admin')
   @Delete(':id')
-  remove(@Param('id',ParseIntPipe) id: number) {
-    //return this.storeService.deleteStore(id);
+  async deleteStore(@Param('id',ParseIntPipe) id: number) {
+    return this.storeService.deleteStore(id);
   }
 
-  //@Post('add-bulk-product')
 }

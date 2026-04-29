@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { QueueProcessorService } from 'src/core/queue-processor/queue-processor.service';
 import { StoreService } from 'src/apis/store/store.service';
 import { CustomerService } from 'src/apis/customer/customer.service';
+import { AdminService } from 'src/apis/admin/admin.service';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +14,8 @@ export class AuthService {
     private userService: UsersService,
     private queueService: QueueProcessorService,
     private storeService: StoreService,
-    private customerService: CustomerService) { }
+    private customerService: CustomerService,
+    private adminService :AdminService) { }
 
   async validateToken(token: string) {
     return await this.jwtService.verifyAsync(token);
@@ -48,7 +50,9 @@ export class AuthService {
     }
     else if (isRegisterUser.roleId === 3) {
       user = await this.storeService.getStoreDetailsByUserId(isRegisterUser.id);
-    } else {
+    } else if(isRegisterUser.roleId === 1){
+      user = await this.adminService.getAdminDetailsByUserId(isRegisterUser.id);
+    }else {
       return null;
     }
 

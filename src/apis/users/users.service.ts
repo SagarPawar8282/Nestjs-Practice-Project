@@ -63,4 +63,7 @@ export class UsersService {
     }
   }
 
+  async deleteUser(storeId){
+    return await this.userRepository.destroy({where:{id:storeId}});
+  }
 }
