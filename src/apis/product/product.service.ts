@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 // import { PRODUCT_REPOSITORY } from './product.repository';
 // import { Product } from './product.model';
 import { QueueProcessorService } from 'src/core/queue-processor/queue-processor.service';
-import { ProductPreristenceModel } from '../product-persistence/product-persistence.model';
+import { ProductPeristenceModel } from '../product-persistence/product-persistence.model';
 import { PRODUCT_PERSISTENCE_REPOSITORY } from '../product-persistence/product-persistence.repository';
 import { logger } from 'src/common/logger/logger';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -13,7 +13,7 @@ import { Query } from 'src/common/services/query/query';
 @Injectable()
 export class ProductService {
     constructor(
-        @Inject(PRODUCT_PERSISTENCE_REPOSITORY) private readonly productRepository: typeof ProductPreristenceModel,
+        @Inject(PRODUCT_PERSISTENCE_REPOSITORY) private readonly productRepository: typeof ProductPeristenceModel,
         private queueService: QueueProcessorService, private queryService: QueryService,
         @Inject(CACHE_MANAGER) private cacheManager: Cache) { }
 
@@ -119,11 +119,22 @@ export class ProductService {
         const categories = await this.queryService.executeQuery(Query.getAllProductCategory(productCategory), null);
 
         //let categoryArray:Map<number,number>= new Map();
-        let categoryArray = [] ;
+        let categoryArray = [];
         if (Array.isArray(categories)) {
             categories.map((r) => categoryArray.push(r.product_category));
         }
 
         return categoryArray;
+    }
+
+    async findStoreProductComboPresent(storeId, productId):Promise<ProductPeristenceModel | null>{
+        const available = await this.productRepository.findOne({ where: { storeId: storeId, id: productId } });
+        return available && available != undefined ? available : null;
+    }
+
+    async reduceStockForBooking(productId,updatedStock):Promise<boolean>{
+    
+        const updateStock = await this.productRepository.update({stock:updatedStock},{where:{id:productId}})
+        return updateStock?.[0]===1 ;
     }
 }

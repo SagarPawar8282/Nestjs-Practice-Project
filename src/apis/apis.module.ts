@@ -7,7 +7,8 @@ import { UsersModule } from './users/users.module';
 import { StoreModule } from './store/store.module';
 import { ProductModule } from "./product/product.module";
 import { AdminModule } from "./admin/admin.module";
+import { BookingsModule } from "./bookings/bookings.module";
 
 @Module({
-    imports:[CustomerModule, RolesModule, UsersModule, StoreModule,ProductModule,AdminModule],
+    imports:[CustomerModule, RolesModule, UsersModule, StoreModule,ProductModule,AdminModule,BookingsModule],
 })export class ApisModules{}

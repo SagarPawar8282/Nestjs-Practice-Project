@@ -1,8 +1,9 @@
-import { BelongsTo, Column, DataType, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, HasMany, Model, PrimaryKey, Table } from "sequelize-typescript";
 import { Store } from "../store/store.model";
+import { Booking } from "../bookings/bookings.model";
 
 @Table({tableName:'product',timestamps:true})
-export class ProductPreristenceModel extends Model<ProductPreristenceModel>{
+export class ProductPeristenceModel extends Model<ProductPeristenceModel>{
 
     @Column({
         type:DataType.INTEGER,
@@ -54,4 +55,7 @@ export class ProductPreristenceModel extends Model<ProductPreristenceModel>{
     storeId:number;
     @BelongsTo(()=>Store)
     store:Store;
+
+    @HasMany(()=>Booking)
+    booking:Booking;
 }

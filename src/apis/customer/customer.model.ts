@@ -1,5 +1,6 @@
-import { AutoIncrement, BelongsTo, Column, DataType, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
+import { AutoIncrement, BelongsTo, Column, DataType, ForeignKey, HasMany, Model, PrimaryKey, Table } from "sequelize-typescript";
 import { Users } from "../users/users.model";
+import { Booking } from "../bookings/bookings.model";
 
 @Table({ tableName: 'customer', timestamps: false })
 export class Customer extends Model<Customer> {
@@ -38,6 +39,8 @@ export class Customer extends Model<Customer> {
     })
     userId: number;
     @BelongsTo(() => Users)
-    users: Users
+    users: Users;
 
+    @HasMany(()=>Booking)
+    booking:Booking;
 }
