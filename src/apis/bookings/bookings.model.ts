@@ -48,7 +48,7 @@ export class Booking extends Model<Booking> {
 
     @Column({
         type:DataType.ENUM(
-            'pending','complete','failed','refunded'
+            'pending','complete','failed','refunded','confirmed','out-for-delivery'
         ),
         field:'booking_status',
     })

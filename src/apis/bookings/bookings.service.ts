@@ -62,8 +62,10 @@ export class BookingsService {
     //Frontend opens gateway SDK/UI.send this response to this 
     //after receiving this response it accept the amount and call out backend for status update 
     //notify the frontend as successful event 
-    async createPayment(id: number) {
-        const booking = await this.bookingRepository.findOne({ where: { id: id } });
+    async createPayment(obj) {
+        try{
+        const {id}= obj;
+        const booking = await this.bookingRepository.findOne({where:{id:id}});
 
         if (!booking) {
             throw new Error('booking not found');
@@ -83,6 +85,9 @@ export class BookingsService {
         }
 
         return order;
+    }catch(err){
+        return err.message;
+    }
     }
 
     //this method call by payment gateway internally after receiving payment successfully
@@ -124,5 +129,9 @@ export class BookingsService {
     async checkPaymentReceivedSuccessfully(bookingId:number){
         const status = await this.queryService.executeQuery(Query.checkPaymentReceivedSuccessfully(bookingId),null);
         return status;
+    }
+
+    async orderShouldBeDeliver(){
+        
     }
 }

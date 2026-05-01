@@ -15,9 +15,9 @@ export class BookingsController {
     return this.bookingsService.bookProduct(bookingInfo);
   }
 
-  @Post('make-payment')
-  async makePayment(@Body()bookingId:number){
-    return this.bookingsService.createPayment(bookingId);
+  @Post('create-payment')
+  async makePayment(@Body()bookingIdobj:number){
+    return this.bookingsService.createPayment(bookingIdobj);
   }
 
   @Post('update-status-after-payment-getway-call')
@@ -25,8 +25,8 @@ export class BookingsController {
     return this.bookingsService.paymentWebhook(orderDetailsByGatway);
   }
 
-  @Post('verify-payment')
-  async checkPaymentReceivedSuccessfully(@Body()bookingId:number){
+  @Get('verify-payment')
+  async checkPaymentReceivedSuccessfully(@Query('bookingId')bookingId:number){
     return this.bookingsService.checkPaymentReceivedSuccessfully(bookingId);
   }
 }
