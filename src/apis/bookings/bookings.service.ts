@@ -63,31 +63,47 @@ export class BookingsService {
     //after receiving this response it accept the amount and call out backend for status update 
     //notify the frontend as successful event 
     async createPayment(obj) {
-        try{
-        const {id}= obj;
-        const booking = await this.bookingRepository.findOne({where:{id:id}});
+        try {
+            const { id } = obj;
+            const booking = await this.bookingRepository.findOne({ where: { id: id } });
 
-        if (!booking) {
-            throw new Error('booking not found');
+            if (!booking) {
+                throw new Error('booking not found');
+            }
+
+            if (booking.paymentStatus === 'paid') {
+                throw new Error('already paid');
+            }
+
+            //fake geteway payment order creation
+
+            const order = {
+                gatewayPaymentId: `PAY_${Date.now()}`,
+                bookingId: id,
+                amount: booking.totalAmount,
+                status: booking.paymentStatus
+            }
+
+            return order;
+        } catch (err) {
+            return err.message;
         }
-
-        if (booking.paymentStatus === 'paid') {
-            throw new Error('already paid');
-        }
-
-        //fake geteway payment order creation
-
-        const order = {
-            gatewayPaymentId: `PAY_${Date.now()}`,
-            bookingId: id,
-            amount: booking.totalAmount,
-            status: booking.paymentStatus
-        }
-
-        return order;
-    }catch(err){
-        return err.message;
     }
+
+    async refundAmount(id) {
+        try {
+            const booking = await this.bookingRepository.findOne({ where: { id: id } });
+            console.log("booking"+JSON.stringify(booking));
+            const order = {
+                gatewayPaymentId: `PAY_${Date.now()}`,
+                booking: id,
+                amount: booking.totalAmount,
+                status: PaymentStatus.REFUNDED
+            }
+            return order;
+        } catch (err) {
+            throw new Error(err.message);
+        }
     }
 
     //this method call by payment gateway internally after receiving payment successfully
@@ -116,22 +132,41 @@ export class BookingsService {
         if (status === 'FAILED') {
             const changeStatus = await this.bookingRepository.update(
                 {
-                    paymentStatus:PaymentStatus.FAILED,
+                    paymentStatus: PaymentStatus.FAILED,
 
                 },
                 {
                     where: { id: bookingId }
                 });
-            return {message : 'payment failed' }
+            return { message: 'payment failed' }
         }
     }
 
-    async checkPaymentReceivedSuccessfully(bookingId:number){
-        const status = await this.queryService.executeQuery(Query.checkPaymentReceivedSuccessfully(bookingId),null);
+    async refundPaymentWebHook(refundDetails){
+        if(!refundDetails){
+            throw new Error('could not found refunde details');
+        }
+        const {bookingId,paymentStatus} = refundDetails;
+
+        if(paymentStatus === 'refunded'){
+            const changePaymentStatus = await this.bookingRepository.update(
+                {
+                    paymentStatus:paymentStatus
+                },{
+                    where:{id:bookingId}
+                }
+            )
+        }
+        return {message:'payment refunded'}
+    }
+
+    async checkPaymentReceivedSuccessfully(bookingId: number) {
+        const status = await this.queryService.executeQuery(Query.checkPaymentReceivedSuccessfully(bookingId), null);
         return status;
     }
 
-    async orderShouldBeDeliver(){
-        
+    async changeBookingStatus(bookingStatus: string, bookingId: number) {
+        const booking = await this.bookingRepository.update({ bookingStatus: bookingStatus }, { where: { id: bookingId } });
+        return booking && booking[0] === 1 ? true : false;
     }
 }
