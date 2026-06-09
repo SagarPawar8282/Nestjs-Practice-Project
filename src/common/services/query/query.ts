@@ -1,14 +1,23 @@
+import { BookingStatus } from "src/common/enum/bookingStatus.enum"
+import { PaymentStatus } from "src/common/enum/paymentStatus.enum"
+
 export class Query {
-    static getAllProductCategory(productCategory: string) {
+    static getAllProductCategory() {
         return `SELECT distinct(product_category)
-                from product as p
-                where p.product_category='${productCategory}' and p.product_category is not null;`
+                from product_category as p
+                where p.product_category is not null;`
     }
 
     static checkPaymentReceivedSuccessfully(id: number) {
         return `SELECT payment_status
                 from booking as b
                 where b.id=${id};`
+    }
+
+    static fetchAllStoreCategories() {
+        return `select distinct(store_category)
+        from store as s
+        where s.store_category is not null;`
     }
 
     static checkOrderShouldOutOfDelivery() {
@@ -25,5 +34,30 @@ export class Query {
                 FROM booking_order_details bod
                 WHERE bod.booking_id = bd.id
             );`
+    }
+
+    static findAllProductCategoryUnderStore(storeId) {
+        return `select distinct(pc.product_category)
+                from product as p
+                left join product_category as pc
+                on pc.id = p.product_catagery_id
+                where p.store_id=${storeId}`
+    }
+
+    static failedMarkForBookedButNotPaid(){
+        return `update booking
+                set booking_status =${BookingStatus.FAILED}
+                where order_date`
+    }
+
+    static sendOrderToCustomerOrRejectDelevery(status,bookingId){
+        return `update booking
+                set booking_status = '${status}'
+                where id=${bookingId}`
+    }
+    static returnTheAmount(bookingId){
+        return `update booking
+                set payment_status ='${PaymentStatus.REFUNDED}'
+                where id=${bookingId}`
     }
 }

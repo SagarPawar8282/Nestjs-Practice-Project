@@ -45,4 +45,6 @@ export class Users extends Model<Users> {
 
     @HasOne(()=>Customer)
     customer:Customer;
+
+    
 }

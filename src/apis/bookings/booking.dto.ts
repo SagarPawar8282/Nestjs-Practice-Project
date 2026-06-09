@@ -1,4 +1,4 @@
-import { IsDefined, IsNumber } from "class-validator";
+import { IsBoolean, IsDefined, IsNumber, IsObject, IsString } from "class-validator";
 
 export class BookingDto{
 
@@ -8,7 +8,7 @@ export class BookingDto{
 
     @IsNumber()
     @IsDefined()
-    customerId:number;
+    userId:number;
 
     @IsNumber()
     @IsDefined()
@@ -21,5 +21,21 @@ export class BookingDto{
     @IsNumber()
     @IsDefined()
     totalAmount:number;
+
+    @IsString()
+    @IsDefined()
+    address:string;
+
+    @IsString()
+    @IsDefined()
+    city:string;
+
+    @IsString()
+    @IsDefined()
+    state:string;
+
+    @IsBoolean()
+    @IsDefined()
+    isPaymentSuccess:boolean;
 }
 

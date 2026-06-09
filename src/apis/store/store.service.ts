@@ -5,17 +5,15 @@ import { Users } from '../users/users.model';
 import { Roles } from '../roles/roles.model';
 import { ProductService } from '../product/product.service';
 import { UsersService } from '../users/users.service';
+import { QueryService } from 'src/core/query/query.service';
+import { Query } from 'src/common/services/query/query';
 
 @Injectable()
 export class StoreService {
 
   constructor(
     @Inject(STORE_REPOSITORY)private readonly storeRespository:typeof Store,
-    private productService:ProductService,private userService:UsersService){}
-
-  async findAllProductUnderProductCate(productCategory:string) {
-    return this.productService.findAllProductUnderProductCategory(productCategory);
-  }
+    private userService:UsersService,private queryService:QueryService){}
 
   async findOne(id: number) {
     return await this.storeRespository.findOne({where:{id}});
@@ -48,8 +46,12 @@ export class StoreService {
     return store;
   }
 
-  async getJobstatus(id:number){
-    return await this.productService.getJobStatus(id);
+  async getAllStoreDetailsByStore(storeCategory:string){
+    const store =await this.storeRespository.findAll({
+      where:{storeCategory:storeCategory},
+      include:[Users]
+    });
+    return store;
   }
 
   async deleteStore( id: number){
@@ -65,5 +67,26 @@ export class StoreService {
       return "store deleted";
     } 
     return null;
+  }
+
+  async fetchAllStoreCategories(){
+    const categories = await this.queryService.executeQuery(Query.fetchAllStoreCategories(),null);
+    let storeCategories = [];
+
+    if(Array.isArray(categories)){
+      categories.map((c)=>storeCategories.push(c.store_category));
+    }
+    return storeCategories;
+  }
+
+  async findSimilarStoreFromStoreCategory(storeCategory:string){
+    return await this.storeRespository.findAll({where:{storeCategory:storeCategory}});
+
+  }
+
+  async fetchUserDetaisByUserId(userId){
+    console.log(userId);
+    
+    return await this.storeRespository.findOne({where:{userId:userId}});
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { Roles } from 'src/common/decorator/role.decorator';
 import { RoleGuard } from 'src/common/decorator/role-guard.guard';
@@ -12,4 +12,10 @@ export class CustomerController {
   async test(){
     return "test role base authentication";
   }
+
+  @Get('userId/:id')
+  async findOne(@Param ('id',ParseIntPipe)id:number){
+    return this.customerService.getCustomerDetailsByUserId(id);
+  }
+
 }

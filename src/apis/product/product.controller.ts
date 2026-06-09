@@ -35,21 +35,49 @@ export class ProductController {
   }
 
   @UseGuards(RoleGuard)
-  @Roles('Customer')
+  @Roles('Customer','Store')
   @Get('all-product-under-product-category')
-  async getAllProductUnderProductCategory(@Query('productCategory')productcategory:string){
-    console.log("product Category: "+ productcategory);
-    console.log("product Category length: "+productcategory.length);
-    return this.productService.getAllProductUnderProductCategory(productcategory);
+  async getAllProductUnderProductCategory(
+    @Query('productCategory')productcategory:string,@Query('userId')userId?:string){
+    return this.productService.getAllProductUnderProductCategory(productcategory,userId);
   }
 
+  
+
+  @UseGuards(RoleGuard)
+  @Roles('Customer')
   @Get('get-all-product-category')
-  async getAllProductCategory(@Query('productCategory')productCategory:string){
-    return this.productService.getAllProductCategory(productCategory);
+  async getAllProductCategory(){
+    return this.productService.getAllProductCategory();
   }
 
+  @UseGuards(RoleGuard)
+  @Roles('Customer','Store')
+  @Get('All-product-category-under-store/:storeId')
+  async findAllProductCategoryUnderStore(@Param('storeId',ParseIntPipe)storeId:number){
+    return this.productService.findAllProductCategoryUnderStore(storeId);
+  }
+
+  @UseGuards(RoleGuard)
+  @Roles('Customer')
+  @Get("findAllProduct")
+  async findAllProduct(@Query('productName')productName:string,@Query('storeId')storeId?:string){
+    return this.productService.findAllProduct(productName,storeId);
+  }
+
+  @UseGuards(RoleGuard)
+  @Roles('Store')
+  @Get("findProductIdByProductNameAndStoreId")
+  async findProductIdByProductNameAndStoreId(@Query('productName')productName:string,@Query('storeId',ParseIntPipe)storeId:number){
+    return this.productService.findProductIdByProductNameAndStoreId(productName,storeId);
+  }
+
+  @UseGuards(RoleGuard)
+  @Roles('Customer','Store')
   @Get(':id')
   async findOne(@Param ('id',ParseIntPipe)id :number){
     return this.productService.findOne(id);
   }
+
+  
 }

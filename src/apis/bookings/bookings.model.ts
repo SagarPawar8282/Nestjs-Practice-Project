@@ -1,6 +1,8 @@
-import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, HasOne, Model, Table } from "sequelize-typescript";
 import { ProductPeristenceModel } from "../product-persistence/product-persistence.model";
 import { Customer } from "../customer/customer.model";
+import { BookingAddressDetails } from "../booking-address-details/booking-address-details.model";
+import { Review } from "../reviews/reviews.model";
 
 @Table({ tableName: 'booking', timestamps: true })
 export class Booking extends Model<Booking> {
@@ -56,7 +58,7 @@ export class Booking extends Model<Booking> {
 
     @Column({
         type:DataType.ENUM(
-            'pending','paid','failed','refunded'
+            'pending','paid','refunded','failed'
         ),
         field:'payment_status'
     })
@@ -69,4 +71,15 @@ export class Booking extends Model<Booking> {
     })
     totalAmount: number;
 
+    @ForeignKey(()=>BookingAddressDetails)
+    @Column({
+        type:DataType.INTEGER,
+        field:'booking_address_details_id'
+    })
+    bookingAddressDetailsId:number;
+    @BelongsTo(()=>BookingAddressDetails)
+    bookingAddressDetails:BookingAddressDetails
+
+    @HasOne(()=>Review)
+    review:Review
 }

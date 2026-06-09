@@ -3,11 +3,13 @@ import { CUSTOMER_REPOSITORY } from './customer.Repository';
 import { Customer } from './customer.model';
 import { Users } from '../users/users.model';
 import { Roles } from '../roles/roles.model';
+import { StoreService } from '../store/store.service';
 
 @Injectable()
 export class CustomerService {
 
-  constructor(@Inject(CUSTOMER_REPOSITORY) private readonly customerRepository: typeof Customer) { }
+  constructor(
+    @Inject(CUSTOMER_REPOSITORY) private readonly customerRepository: typeof Customer) { }
 
   async customerRegistration(customer: any): Promise<Customer> {
     return this.customerRepository.create(customer);
@@ -17,8 +19,8 @@ export class CustomerService {
     return `This action returns all customer`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} customer`;
+  async findOne(id: number) {
+    return await this.customerRepository.findOne({where:{userId:id}}) 
   }
 
   update() {
@@ -51,4 +53,5 @@ export class CustomerService {
     });
     return customer;
   }
+
 }

@@ -3,5 +3,6 @@ export enum BookingStatus{
     CONFIRMED='confirmed',
     COMPLETE='complete',
     FAILED='failed',
-    REFUNDED='refunded'
+    REFUNDED='refunded',
+    OUTFORDELIVERY='out-for-delivery'
 }

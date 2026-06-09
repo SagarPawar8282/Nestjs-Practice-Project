@@ -11,6 +11,7 @@ export class AddSingleProductDto{
     @IsDefined()
     productCategory:string;
 
+    @IsString()
     description:string;
     
     @IsNumber()

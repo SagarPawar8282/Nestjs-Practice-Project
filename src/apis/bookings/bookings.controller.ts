@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { BookingDto } from './booking.dto';
 import { RoleGuard } from 'src/common/decorator/role-guard.guard';
@@ -10,23 +10,37 @@ export class BookingsController {
 
   @UseGuards(RoleGuard)
   @Roles('Customer')
-  @Post('buy-product')
+  @Post('book-product')
   async bookProduct(@Body()bookingInfo:BookingDto){
     return this.bookingsService.bookProduct(bookingInfo);
   }
-
-  @Post('create-payment')
-  async makePayment(@Body()bookingIdobj:number){
-    return this.bookingsService.createPayment(bookingIdobj);
+  
+  @UseGuards(RoleGuard)
+  @Roles('Customer')
+  @Get('getBookingDetailsByUserId/:userId')
+  async getBookingDetailsByUserId(@Param('userId',ParseIntPipe)userId:number){
+    return  this.bookingsService.getBookingDetailsByUserId(userId);
   }
 
-  @Post('update-status-after-payment-getway-call')
-  async paymentwebhook(@Body()orderDetailsByGatway:any){
-    return this.bookingsService.paymentWebhook(orderDetailsByGatway);
+  @UseGuards(RoleGuard)
+  @Roles('Store')
+  @Get('getSuccessfullyBookedProductOrderForStore/:storeId')
+  async getSuccessfullyBookedProductOrderForStore(@Param('storeId',ParseIntPipe)storeId:number){
+    return this.bookingsService.getSuccessfullyBookedProductOrderForStore(storeId);
   }
 
-  @Get('verify-payment')
-  async checkPaymentReceivedSuccessfully(@Query('bookingId')bookingId:number){
-    return this.bookingsService.checkPaymentReceivedSuccessfully(bookingId);
+  @UseGuards(RoleGuard)
+  @Roles('Customer','Store')
+  @Get(':bookingId')
+  async getBookingDetailsByBookingId(@Param('bookingId',ParseIntPipe)bookingId:number){
+    return this.bookingsService.findOne(bookingId);
   }
+
+  @UseGuards(RoleGuard)
+  @Roles('Store')
+  @Patch('sendOrderToCustomerOrRejectDelevery/:id')
+  async sendOrderToCustomerOrRejectDelevery(@Param('id',ParseIntPipe)id:number,@Body()inputAction:Object){
+    return this.bookingsService.sendOrderToCustomerOrRejectDelevery(id,inputAction);
+  }
+
 }

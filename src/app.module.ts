@@ -10,7 +10,6 @@ import { APP_GUARD } from '@nestjs/core';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
 import { ConfigModule } from '@nestjs/config';
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -57,7 +56,7 @@ import { ConfigModule } from '@nestjs/config';
           }),
         };
       },
-    })
+    }),
   ],
   controllers: [],
   providers: [

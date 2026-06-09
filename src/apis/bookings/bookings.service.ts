@@ -7,19 +7,33 @@ import { BookingStatus } from 'src/common/enum/bookingStatus.enum';
 import { PaymentStatus } from 'src/common/enum/paymentStatus.enum';
 import { QueryService } from 'src/core/query/query.service';
 import { Query } from 'src/common/services/query/query';
+import { CustomerService } from '../customer/customer.service';
+import { ProductPeristenceModel } from '../product-persistence/product-persistence.model';
+import { Store } from '../store/store.model';
+import { BookingAddressDetails } from '../booking-address-details/booking-address-details.model';
+import { BookingAddressDetailsService } from '../booking-address-details/booking-address-details.service';
+import { ProductCategory } from '../product-categories/product-categories.model';
+import { Customer } from '../customer/customer.model';
+import { Model } from 'sequelize';
 
 @Injectable()
 export class BookingsService {
     constructor(
         @Inject(BOOKING_REPOSITORY) private readonly bookingRepository: typeof Booking,
         private productService: ProductService, private queryService: QueryService,
+        private customerService: CustomerService, private bookingAddressDetailsService: BookingAddressDetailsService
+
     ) { }
 
     async bookProduct(bookingInfo) {
         try {
-            const { productId, customerId, quantity, storeId, totalAmount } = bookingInfo;
+            const { productId, userId, quantity, storeId, totalAmount, address, city, state, isPaymentSuccess } = bookingInfo;
 
-            //this method remove after frontend ui made because customer can see only those store whose sell this perticular product  
+            const customer = await this.customerService.findOne(userId)
+
+            if (!customer) {
+                return false;
+            }
             const checkProductAvailableUnderStore = await this.productService.findStoreProductComboPresent(storeId, productId);
 
             if (checkProductAvailableUnderStore === null) {
@@ -30,15 +44,23 @@ export class BookingsService {
                 return 'required stock is not availble'
             }
 
+            const bookingAddressDetailsRecord = await this.bookingAddressDetailsService.create({ lane: address, city: city, state: state });
+
+            if (!bookingAddressDetailsRecord) {
+                throw new Error('something error during booking address details record creation');
+            }
+
             const book = await this.bookingRepository.create({
                 productId: productId,
-                customerId: customerId,
+                customerId: customer?.id,
                 quantity: quantity,
                 orderDate: dayjs().format('YYYY-MM-DD'),         //same like moment but advanced and lightweight
-                bookingStatus: BookingStatus.PENDING,
-                paymentStatus: PaymentStatus.PENDING,
-                totalAmount: totalAmount
+                bookingStatus: BookingStatus.CONFIRMED,
+                paymentStatus: isPaymentSuccess ? PaymentStatus.PAID : PaymentStatus.PENDING,
+                totalAmount: totalAmount,
+                bookingAddressDetailsId: bookingAddressDetailsRecord.id
             });
+
 
             if (!book) {
                 throw new Error('error during product booking');
@@ -56,117 +78,74 @@ export class BookingsService {
             throw new Error(err.message);
         }
     }
+    async getBookingDetailsByUserId(userId) {
+        const customer = await this.customerService.findOne(userId);
 
-    //after booking this api call, after executing this method response send to frontend 
-    //frontend receive this response 
-    //Frontend opens gateway SDK/UI.send this response to this 
-    //after receiving this response it accept the amount and call out backend for status update 
-    //notify the frontend as successful event 
-    async createPayment(obj) {
-        try {
-            const { id } = obj;
-            const booking = await this.bookingRepository.findOne({ where: { id: id } });
-
-            if (!booking) {
-                throw new Error('booking not found');
-            }
-
-            if (booking.paymentStatus === 'paid') {
-                throw new Error('already paid');
-            }
-
-            //fake geteway payment order creation
-
-            const order = {
-                gatewayPaymentId: `PAY_${Date.now()}`,
-                bookingId: id,
-                amount: booking.totalAmount,
-                status: booking.paymentStatus
-            }
-
-            return order;
-        } catch (err) {
-            return err.message;
-        }
-    }
-
-    async refundAmount(id) {
-        try {
-            const booking = await this.bookingRepository.findOne({ where: { id: id } });
-            console.log("booking"+JSON.stringify(booking));
-            const order = {
-                gatewayPaymentId: `PAY_${Date.now()}`,
-                booking: id,
-                amount: booking.totalAmount,
-                status: PaymentStatus.REFUNDED
-            }
-            return order;
-        } catch (err) {
-            throw new Error(err.message);
-        }
-    }
-
-    //this method call by payment gateway internally after receiving payment successfully
-    // parallelly it notify the  the front end , but we should not depend on gateway response in frontend for payment conformation 
-    // it should call other api to check payment received and show on ui.
-    async paymentWebhook(orderDetails) {
-
-        if (!orderDetails) {
-            throw new Error('could not find order details')
-        }
-
-        const { bookingId, status } = orderDetails;
-
-        if (status === 'SUCCESS') {
-            const changeStatus = await this.bookingRepository.update(
+        const result = await this.bookingRepository.findAll({
+            where: { customerId: customer.id },
+            order: [['createdAt', 'DESC']],
+            include: [
                 {
-                    paymentStatus: PaymentStatus.PAID,
-                    bookingStatus: BookingStatus.CONFIRMED
-                },
-                {
-                    where: { id: bookingId }
-                });
-
-            return { message: `payment successfully` }
-        }
-        if (status === 'FAILED') {
-            const changeStatus = await this.bookingRepository.update(
-                {
-                    paymentStatus: PaymentStatus.FAILED,
-
-                },
-                {
-                    where: { id: bookingId }
-                });
-            return { message: 'payment failed' }
-        }
-    }
-
-    async refundPaymentWebHook(refundDetails){
-        if(!refundDetails){
-            throw new Error('could not found refunde details');
-        }
-        const {bookingId,paymentStatus} = refundDetails;
-
-        if(paymentStatus === 'refunded'){
-            const changePaymentStatus = await this.bookingRepository.update(
-                {
-                    paymentStatus:paymentStatus
-                },{
-                    where:{id:bookingId}
+                    model: ProductPeristenceModel,
+                    include: [Store]
                 }
-            )
-        }
-        return {message:'payment refunded'}
+            ]
+        });
+        return result;
+    }
+    async findOne(bookingId: number) {
+        return await this.bookingRepository.findOne({
+            where: { id: bookingId },
+            include: [
+                {
+                    model: ProductPeristenceModel,
+                    include: [Store, ProductCategory]
+                }, {
+                    model: BookingAddressDetails
+                }
+            ]
+        });
     }
 
-    async checkPaymentReceivedSuccessfully(bookingId: number) {
-        const status = await this.queryService.executeQuery(Query.checkPaymentReceivedSuccessfully(bookingId), null);
-        return status;
+    async checkUserHadBookedTheProduct(bookingId: number) {
+        const result = await this.bookingRepository.findOne({
+            where: { id: bookingId, bookingStatus: 'complete' },
+        });
+        return result;
     }
 
-    async changeBookingStatus(bookingStatus: string, bookingId: number) {
-        const booking = await this.bookingRepository.update({ bookingStatus: bookingStatus }, { where: { id: bookingId } });
-        return booking && booking[0] === 1 ? true : false;
+    async failedMarkForBookedButNotPaid() {
+        console.log('failed mark for booked but payment not received');
+        await this.queryService.executeQuery(Query.failedMarkForBookedButNotPaid(), null);
+    }
+
+    async getSuccessfullyBookedProductOrderForStore(storeId) {
+        return await this.bookingRepository.findAll({
+            where: { bookingStatus: 'confirmed', paymentStatus: 'paid' },
+            include: [
+                {
+                    model: ProductPeristenceModel,
+                    where: { storeId: storeId }
+                }
+            ]
+        })
+    }
+
+    async sendOrderToCustomerOrRejectDelevery(id: number, inputAction) {
+        try {
+            let response;
+            let status = inputAction.action === 'accept' ? BookingStatus.OUTFORDELIVERY : BookingStatus.FAILED;
+            const result = await this.queryService.executeQuery(Query.sendOrderToCustomerOrRejectDelevery(status, id), null)
+            if (result) {
+                response = { data: 'accepted' }
+                if (inputAction.action === 'reject') {
+                    const record = await this.queryService.executeQuery(Query.returnTheAmount(id), null)
+                    response = { data: 'rejected' }
+                }
+            } else {
+                response = { data: 'error' }
+            }
+            return response
+        } catch (error) { throw error }
     }
 }

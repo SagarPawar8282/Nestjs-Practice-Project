@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { StoreService } from './store.service';
 import { StoreController } from './store.controller';
 import { StoreRepositoryProvider } from './store.repository';
-import { ProductModule } from '../product/product.module';
 import { UsersModule } from '../users/users.module';
+import { QueryModule } from 'src/core/query/query.module';
 
 @Module({
-  imports:[ProductModule,UsersModule],
+  imports:[UsersModule,QueryModule],
   controllers: [StoreController],
   providers: [StoreService,StoreRepositoryProvider],
   exports:[StoreService]

@@ -21,6 +21,12 @@ export class Store extends Model<Store> {
     name: string;
 
     @Column({
+        type:DataType.STRING,
+        field:'store_category'
+    })
+    storeCategory:string;
+
+    @Column({
         type: DataType.STRING,
         field: 'address'
     })

@@ -7,6 +7,11 @@ import { ProductPeristenceModel } from "./apis/product-persistence/product-persi
 import { Admin } from "./apis/admin/admin.model";
 import { Booking } from "./apis/bookings/bookings.model";
 import { BookingOrderDetailsModel } from "./apis/booking-order-details/booking-order-details.model";
+import { CartModel } from "./apis/cart/cart.model";
+import { BookingAddressDetails } from "./apis/booking-address-details/booking-address-details.model";
+import { ProductCategory } from "./apis/product-categories/product-categories.model";
+import { Review } from "./apis/reviews/reviews.model";
+import { ProductDimension } from "./apis/product-dimensions/product-dimensions.model";
 //import { Product } from "./apis/product/product.model";
 
 
@@ -19,5 +24,10 @@ export const MODELS: ModelCtor<Model<any,any>>[]=[
    // Product,
    ProductPeristenceModel,
    Booking,
-   BookingOrderDetailsModel
+   BookingOrderDetailsModel,
+   CartModel,
+   BookingAddressDetails,
+   ProductCategory,
+   Review,
+   ProductDimension
 ]
