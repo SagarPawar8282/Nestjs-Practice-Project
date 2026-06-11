@@ -32,7 +32,7 @@ export class ProductDimension extends Model<ProductDimension>{
     length:number;
 
     @Column({
-        type:DataType.INTEGER,
+        type:DataType.STRING,
         field:'shape'
     })
     shape:string;
@@ -50,7 +50,7 @@ export class ProductDimension extends Model<ProductDimension>{
     weight:number;
 
     @Column({
-        type:DataType.INTEGER,
+        type:DataType.STRING,
         field:'color'
     })
     color:string

@@ -15,13 +15,6 @@ export class ProductController {
     return this.productService.addSingleProduct(product);
   }
 
-  @UseGuards(RoleGuard)
-  @Roles('Store')
-  @Post('bulk-add-product')
-  async bulkAddProduct(@Body()bulkProductDetails:BulkAddProductDto){
-    return this.productService.BulkAddProduct(bulkProductDetails);
-  }
-
   @Put('update-product/:id')
   async updateProductData(@Param('id',ParseIntPipe)id:number,@Body()productData:Object){
     return this.productService.updateProductData(id,productData);

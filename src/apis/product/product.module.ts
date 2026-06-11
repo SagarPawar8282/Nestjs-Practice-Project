@@ -7,9 +7,10 @@ import { ProductPersistenceModule } from '../product-persistence/product-persist
 import { QueryModule } from 'src/core/query/query.module';
 import { StoreModule } from '../store/store.module';
 import { ProductCategoriesModule } from '../product-categories/product-categories.module';
+import { ProductDimensionsModule } from '../product-dimensions/product-dimensions.module';
 
 @Module({
-  imports:[QueueProcessorModule,ProductPersistenceModule,QueryModule,StoreModule,ProductCategoriesModule],
+  imports:[QueueProcessorModule,ProductPersistenceModule,QueryModule,StoreModule,ProductCategoriesModule,ProductDimensionsModule],
   controllers: [ProductController],
   providers: [ProductService,/*productRepositoryProvider*/],
   exports: [ProductService],

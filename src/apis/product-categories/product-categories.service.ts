@@ -12,12 +12,20 @@ export class ProductCategoriesService {
   ){}
 
   async create(createProductCategoryDto) {
+    const isExits = await this.findProductCategoryByCategoryName(createProductCategoryDto.productCategory)
+    if(isExits){
+      return isExits;
+    }
     return await this.productCategoryRepository.create(createProductCategoryDto);
   }
 
   async findAll() {
     const categories =await this.queryService.executeQuery(Query.getAllProductCategory(), null)    
     return categories;
+  }
+
+  async findProductCategoryByCategoryName(category:string){
+    return await this.productCategoryRepository.findOne({where:{productCategory:category}})
   }
 
   async findOne(id: number) {

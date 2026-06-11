@@ -1,24 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { PRODUCT_DIMENSIONS_REPOSITORY } from './product-dimensions.repository';
+import { ProductDimension } from './product-dimensions.model';
 
 @Injectable()
 export class ProductDimensionsService {
-  create(createProductDimensionDto) {
-    return 'This action adds a new productDimension';
+
+  constructor(@Inject(PRODUCT_DIMENSIONS_REPOSITORY)private readonly productDimensionRepository:typeof ProductDimension){}
+
+  async create(createProductDimension) {
+    return await this.productDimensionRepository.create(createProductDimension);
   }
 
-  findAll() {
+  async findAll() {
     return `This action returns all productDimensions`;
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
     return `This action returns a #${id} productDimension`;
   }
 
-  update(id: number, updateProductDimensionDto) {
+  async update(id: number, updateProductDimensionDto) {
     return `This action updates a #${id} productDimension`;
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return `This action removes a #${id} productDimension`;
   }
 }

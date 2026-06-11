@@ -1,5 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { ProductCategoriesService } from './product-categories.service';
+import { RoleGuard } from 'src/common/decorator/role-guard.guard';
+import { Roles } from 'src/common/decorator/role.decorator';
 
 @Controller('product-categories')
 export class ProductCategoriesController {
@@ -13,6 +15,13 @@ export class ProductCategoriesController {
   @Get()
   findAll() {
     return this.productCategoriesService.findAll();
+  }
+
+  @UseGuards(RoleGuard)
+  @Roles('Store')
+  @Get('find-product-category-category-name')
+  findProductCategoryByCategoryName(@Query('category')category:string){
+      return this.productCategoriesService.findProductCategoryByCategoryName(category)
   }
 
   @Get(':id')

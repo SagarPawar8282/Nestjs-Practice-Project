@@ -13,49 +13,50 @@ import { Store } from '../store/store.model';
 import { ProductCategoriesService } from '../product-categories/product-categories.service';
 import { error } from 'console';
 import { ProductCategory } from '../product-categories/product-categories.model';
+import { ProductDimensionsService } from '../product-dimensions/product-dimensions.service';
+import { ProductDimension } from '../product-dimensions/product-dimensions.model';
 
 @Injectable()
 export class ProductService {
     constructor(
         @Inject(PRODUCT_PERSISTENCE_REPOSITORY) private readonly productRepository: typeof ProductPeristenceModel,
         private queueService: QueueProcessorService, private queryService: QueryService,
-        @Inject(CACHE_MANAGER) private cacheManager: Cache, private productCategoryService: ProductCategoriesService) { }
+        @Inject(CACHE_MANAGER) private cacheManager: Cache, private productCategoryService: ProductCategoriesService,
+        private productDimensionService: ProductDimensionsService,
+    ) { }
 
     async addSingleProduct(productDetails) {
         const productCategory = await this.productCategoryService.create({ productCategory: productDetails.productCategory })
         if (!productCategory) {
             throw error('error during product category registeration')
         }
+
+        const productDimension = await this.productDimensionService.create(
+            {
+                height: productDetails?.height,
+                width: productDetails?.width,
+                length: productDetails?.length,
+                shape: productDetails?.shape,
+                quantity: productDetails?.quantity,
+                weight: productDetails?.weight,
+                color: productDetails?.color
+            }
+        )
+        if (!productDimension) {
+            throw error('error during product dimension creation');
+        }
+
         const product = await this.productRepository.create({
             name: productDetails.name,
             description: productDetails.description,
             price: productDetails.price,
             stock: productDetails.stock,
             storeId: productDetails.storeId,
-            productCategoryId: productCategory.id
+            productCategoryId: productCategory.id,
+            proudctDimensionId: productDimension?.id
         });
+
         return product;
-    }
-
-    async BulkAddProduct(bulkProductDetails) {
-        try {
-            let number = 1;
-            const { storeId, productDetails } = bulkProductDetails;
-
-            let jobArray = [];
-            for (let product of productDetails) {
-
-                jobArray.push({ ...product, storeId: storeId });
-
-                number++;
-            }
-
-            await this.queueService.bulkAddProductJob(jobArray);
-            return "Product are successfully added into the Queue";
-        } catch (err) {
-            logger.info(`Logger :- Error : ${err.message}`);
-            throw err;
-        }
     }
 
     async findOne(id: number) {
@@ -73,7 +74,14 @@ export class ProductService {
             } catch (err) {
                 logger.warn('Cache unavailable');
             }
-            const product = await this.productRepository.findOne({ where: { id: id }, include: [{ model: Store }, { model: ProductCategory }] });
+            const product = await this.productRepository.findOne({
+                where: { id: id },
+                include: [
+                    { model: Store },
+                    { model: ProductCategory },
+                    { model: ProductDimension }
+                ]
+            });
 
             await this.cacheManager.set(cache_key, product);
             // console.log("cache response: "+response.dataValues.name);
@@ -123,7 +131,17 @@ export class ProductService {
     }
 
     async getAllProductUnderStore(storeId: number) {
-        return await this.productRepository.findAll({ where: { storeId: storeId }, include: [ProductCategory] })
+        return await this.productRepository.findAll({
+            where: { storeId: storeId },
+            include: [
+                {
+                    model:ProductCategory
+                },
+                {
+                    model:ProductDimension
+                }
+            ]
+        })
     }
 
     async getAllProductUnderProductCategory(productCategory: string, userId?: string) {
@@ -141,6 +159,9 @@ export class ProductService {
                 {
                     model: ProductCategory,
                     where: { productCategory }
+                },
+                {
+                    model:ProductDimension
                 }
             ]
         });
@@ -168,10 +189,14 @@ export class ProductService {
         return updateStock?.[0] === 1;
     }
     async findAllProduct(productName: string, storeId?: string) {
-        let where= storeId?{name:productName,storeId:storeId}:{ name: productName }
+        let where = storeId ? { name: productName, storeId: storeId } : { name: productName }
         const result = await this.productRepository.findAll({
             where,
-            include: [{ model: Store }, { model: ProductCategory }]
+            include: [
+                { model: Store }, 
+                { model: ProductCategory },
+                { model: ProductDimension}
+            ]
         });
         return result;
     }
@@ -186,14 +211,14 @@ export class ProductService {
         return categoryArray;
     }
 
-    async findProductIdByProductNameAndStoreId(productName,storeId){
-        const id= await this.productRepository.findOne({
-            attributes:['id'],
-            where:{
-                name:productName,
-                storeId:storeId
+    async findProductIdByProductNameAndStoreId(productName, storeId) {
+        const id = await this.productRepository.findOne({
+            attributes: ['id'],
+            where: {
+                name: productName,
+                storeId: storeId
             }
         })
-        return id?id:null;
+        return id ? id : null;
     }
 }
