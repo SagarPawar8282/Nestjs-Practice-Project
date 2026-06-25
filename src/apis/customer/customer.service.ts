@@ -15,15 +15,15 @@ export class CustomerService {
     return this.customerRepository.create(customer);
   }
 
-  findAll() {
-    return `This action returns all customer`;
+  async findAll() {
+    return await this.customerRepository.findAll();
   }
 
   async findOne(id: number) {
     return await this.customerRepository.findOne({where:{userId:id}}) 
   }
 
-  update() {
+  async update() {
     return `This action updates a # customer`;
   }
 

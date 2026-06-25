@@ -35,8 +35,6 @@ export class ProductController {
     return this.productService.getAllProductUnderProductCategory(productcategory,userId);
   }
 
-  
-
   @UseGuards(RoleGuard)
   @Roles('Customer')
   @Get('get-all-product-category')

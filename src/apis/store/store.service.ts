@@ -81,12 +81,9 @@ export class StoreService {
 
   async findSimilarStoreFromStoreCategory(storeCategory:string){
     return await this.storeRespository.findAll({where:{storeCategory:storeCategory}});
-
   }
 
   async fetchUserDetaisByUserId(userId){
-    console.log(userId);
-    
     return await this.storeRespository.findOne({where:{userId:userId}});
   }
 }

@@ -8,29 +8,29 @@ export class ProductCategoriesController {
   constructor(private readonly productCategoriesService: ProductCategoriesService) {}
 
   @Post()
-  create(@Body() createProductCategoryDto) {
+  async create(@Body() createProductCategoryDto) {
     return this.productCategoriesService.create(createProductCategoryDto);
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.productCategoriesService.findAll();
   }
 
   @UseGuards(RoleGuard)
   @Roles('Store')
   @Get('find-product-category-category-name')
-  findProductCategoryByCategoryName(@Query('category')category:string){
+  async findProductCategoryByCategoryName(@Query('category')category:string){
       return this.productCategoriesService.findProductCategoryByCategoryName(category)
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return this.productCategoriesService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductCategoryDto) {
+  async update(@Param('id') id: string, @Body() updateProductCategoryDto) {
     return this.productCategoriesService.update(+id, updateProductCategoryDto);
   }
 
