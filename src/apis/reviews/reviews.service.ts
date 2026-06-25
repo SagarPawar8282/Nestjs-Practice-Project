@@ -8,12 +8,14 @@ import { ProductCategory } from '../product-categories/product-categories.model'
 import { Customer } from '../customer/customer.model';
 import { Booking } from '../bookings/bookings.model';
 import { BookingAddressDetails } from '../booking-address-details/booking-address-details.model';
+import { QueryService } from 'src/core/query/query.service';
+import { Query } from 'src/common/services/query/query';
 
 @Injectable()
 export class ReviewsService {
   constructor(
     @Inject(REVIEW_REPOSITORY) private readonly reviewRepository: typeof Review,
-    private bookingService: BookingsService
+    private bookingService: BookingsService,private queryService:QueryService
   ) { }
 
   async create(createReviewDto: ReviewDto) {
@@ -71,5 +73,11 @@ export class ReviewsService {
 
   async remove(id: number) {
     return `This action removes a #${id} review`;
+  }
+
+  async calculateRatingAverage(productId:number){
+    const reviewObj = await this.queryService.executeQuery(Query.returnRatingTotalAndNumberOfRating(productId),null)
+    let average = reviewObj[0]?.sum/reviewObj[0]?.count;
+    return Math.round(average*10)/10;
   }
 }

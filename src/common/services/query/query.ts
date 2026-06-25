@@ -60,4 +60,10 @@ export class Query {
                 set payment_status ='${PaymentStatus.REFUNDED}'
                 where id=${bookingId}`
     }
+
+    static returnRatingTotalAndNumberOfRating(productId:number){
+        return `select sum(rating),count(rating)
+                from reviews as r
+                where r.product_id=${productId}`
+    }
 }

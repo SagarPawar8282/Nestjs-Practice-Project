@@ -25,6 +25,11 @@ export class ReviewsController {
     return this.reviewsService.findAllProductReviewForShop(shopId);
   }
 
+  @Get('getProductRatingAverage/:productId')
+  async calculateRatingAverage(@Param('productId',ParseIntPipe)productId){
+    return this.reviewsService.calculateRatingAverage(productId);
+  }
+
   @Get(':id')
   async findOne(@Param('id',ParseIntPipe) id: number) {
     return this.reviewsService.findOne(id);
