@@ -23,8 +23,9 @@ export class ProductController {
   @UseGuards(RoleGuard)
   @Roles('Store','Customer')
   @Get('all-product-under-store')
-  async getAllProductUnderStore(@Query('storeId',ParseIntPipe)storeId:number){
-    return this.productService.getAllProductUnderStore(storeId);
+  async getAllProductUnderStore(@Query('storeId',ParseIntPipe)storeId:number,
+        @Query('page',ParseIntPipe)page:number,@Query('limit',ParseIntPipe)limit:number){
+    return this.productService.getAllProductUnderStore(storeId,page,limit);
   }
 
   @UseGuards(RoleGuard)

@@ -12,6 +12,8 @@ import { BookingAddressDetails } from "./apis/booking-address-details/booking-ad
 import { ProductCategory } from "./apis/product-categories/product-categories.model";
 import { Review } from "./apis/reviews/reviews.model";
 import { ProductDimension } from "./apis/product-dimensions/product-dimensions.model";
+import { Chat } from "./apis/chat/chat.model";
+import { SchedulesModel } from "./apis/schedules/schedules.model";
 //import { Product } from "./apis/product/product.model";
 
 
@@ -29,5 +31,7 @@ export const MODELS: ModelCtor<Model<any,any>>[]=[
    BookingAddressDetails,
    ProductCategory,
    Review,
-   ProductDimension
+   ProductDimension,
+   Chat,
+   SchedulesModel
 ]

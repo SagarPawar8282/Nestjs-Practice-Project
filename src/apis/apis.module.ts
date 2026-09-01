@@ -14,6 +14,7 @@ import { BookingAddressDetailsModule } from "./booking-address-details/booking-a
 import { ProductCategoriesModule } from "./product-categories/product-categories.module";
 import { ReviewsModule } from './reviews/reviews.module';
 import { ProductDimensionsModule } from "./product-dimensions/product-dimensions.module";
+import { ReportModule } from "./report/report.module";
 @Module({
     imports:[
         CustomerModule, RolesModule, UsersModule, StoreModule,ProductModule,AdminModule,BookingsModule,

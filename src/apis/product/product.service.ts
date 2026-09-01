@@ -130,8 +130,9 @@ export class ProductService {
         return null
     }
 
-    async getAllProductUnderStore(storeId: number) {
-        return await this.productRepository.findAll({
+    async getAllProductUnderStore(storeId: number,page:number,limit:number) {
+        const skip = (page-1)*limit;
+        const response =await this.productRepository.findAll({
             where: { storeId: storeId },
             include: [
                 {
@@ -140,8 +141,15 @@ export class ProductService {
                 {
                     model:ProductDimension
                 }
-            ]
+            ],
+            limit:limit,
+            offset:skip,
         })
+        const meta={
+            page:page,
+            limit:limit,
+        }
+        return [...response,meta]
     }
 
     async getAllProductUnderProductCategory(productCategory: string, userId?: string) {

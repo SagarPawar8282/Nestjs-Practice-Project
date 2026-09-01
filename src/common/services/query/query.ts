@@ -44,26 +44,36 @@ export class Query {
                 where p.store_id=${storeId}`
     }
 
-    static failedMarkForBookedButNotPaid(){
+    static failedMarkForBookedButNotPaid() {
         return `update booking
                 set booking_status =${BookingStatus.FAILED}
                 where order_date`
     }
 
-    static sendOrderToCustomerOrRejectDelevery(status,bookingId){
+    static sendOrderToCustomerOrRejectDelevery(status, bookingId) {
         return `update booking
                 set booking_status = '${status}'
                 where id=${bookingId}`
     }
-    static returnTheAmount(bookingId){
+    static returnTheAmount(bookingId) {
         return `update booking
                 set payment_status ='${PaymentStatus.REFUNDED}'
                 where id=${bookingId}`
     }
 
-    static returnRatingTotalAndNumberOfRating(productId:number){
+    static returnRatingTotalAndNumberOfRating(productId: number) {
         return `select sum(rating),count(rating)
                 from reviews as r
                 where r.product_id=${productId}`
+    }
+
+    static returRecentlyChatUser(receiverId: number) {
+        return `With senderInfoInChat as (
+                select distinct(sender_id) from chats 
+                where receiver_id=${receiverId})
+                select * 
+                from  customer c
+                inner join senderInfoInChat s
+                on c.user_id =s.sender_id`
     }
 }

@@ -3,6 +3,9 @@ import { QueueProcessorService } from './queue-processor.service';
 import { BullModule } from '@nestjs/bull';
 import { QueueProcessor } from './queue-processor.processor';
 import { ProductPersistenceModule } from 'src/apis/product-persistence/product-persistence.module';
+import { EmailQueueProcessor } from './processor/email.processor';
+import { NestLoggingContextService } from 'src/common/nestLogger/nestLogging-context.service';
+import { NestLoggingModule } from 'src/common/nestLogger/nestlogging.module';
 
 @Module({
   imports: [
@@ -13,10 +16,11 @@ import { ProductPersistenceModule } from 'src/apis/product-persistence/product-p
         name:'email-queue'
       }
     ),
-    ProductPersistenceModule  
+    ProductPersistenceModule ,
+    NestLoggingModule 
   ],
   controllers: [],
-  providers: [QueueProcessorService,QueueProcessor,],
+  providers: [QueueProcessorService,QueueProcessor,EmailQueueProcessor],
   exports: [QueueProcessorService,BullModule]
 })
 export class QueueProcessorModule { }

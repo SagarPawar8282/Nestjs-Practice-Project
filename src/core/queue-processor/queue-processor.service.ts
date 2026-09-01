@@ -14,9 +14,9 @@ export class QueueProcessorService {
             const job = await this.bulkAddProduct.add(
                 'bulk-add-product-job', data,
                 {
-                    //retry mechanism
+                    // retry mechanism
                     attempts:3,         //attempt 3 time if fail
-                    backoff:5000,        //try after 5 sec
+                    backoff:5000,       //try after 5 sec
                     priority:1          //this set the priority of job low number means high priority.
                 }
             );

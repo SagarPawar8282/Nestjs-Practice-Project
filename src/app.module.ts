@@ -10,6 +10,12 @@ import { APP_GUARD } from '@nestjs/core';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
 import { ConfigModule } from '@nestjs/config';
+import { ChatModule } from './apis/chat/chat.module';
+import { WebSocketModule } from './webSocket/webSocket.module';
+import { PresenceModule } from './apis/presence/presence.module';
+import { ReportModule } from './apis/report/report.module';
+import { SchedulesModule } from './apis/schedules/schedules.module';
+import { MoniteringModule } from './redisAction/redisAction.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -19,6 +25,7 @@ import { ConfigModule } from '@nestjs/config';
     CanDataSourceModule,
     CoreModule,
     ApisModules,
+    WebSocketModule,
     CommonModule,
     BullModule.forRoot({
       redis: {
@@ -31,10 +38,10 @@ import { ConfigModule } from '@nestjs/config';
       },
       prefix:'Queue'
     }),
-    ScheduleModule.forRoot({}),
+    ScheduleModule.forRoot(),
     ThrottlerModule.forRoot(
       [{
-        ttl: 30000,
+        ttl: 60000,
         limit: 20,
       }]
     ),
@@ -48,6 +55,7 @@ import { ConfigModule } from '@nestjs/config';
       port:6379,
       */
       useFactory: async () => {
+        
         return {
           store: await redisStore({
             host: process.env.REDIS_HOST,
@@ -57,6 +65,11 @@ import { ConfigModule } from '@nestjs/config';
         };
       },
     }),
+    ChatModule,
+    PresenceModule,
+    ReportModule,
+    SchedulesModule,
+    MoniteringModule,
   ],
   controllers: [],
   providers: [

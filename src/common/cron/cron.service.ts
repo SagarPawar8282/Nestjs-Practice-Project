@@ -10,18 +10,13 @@ export class QueueCleanUpService {
         @InjectQueue('bulk-add-product') private readonly queue: Queue,
         private bookingService:BookingsService) { }
 
-    @Cron('0 12 * * *',{name: 'queue-cleanup-job',})
-    async handleQueueCleanUp() {
-        const ONE_DAY = 86400000;
-        console.log('running queue Cleanup');
-        await this.queue.clean(ONE_DAY, 'completed');
-        await this.queue.clean(ONE_DAY, 'failed');
+    // @Cron('0 12 * * *',{name: 'queue-cleanup-job',timeZone:'Asia/Kolkata'})
+    // async handleQueueCleanUp() {
+    //     const ONE_DAY = 86400000;
+    //     console.log('running queue Cleanup');
+    //     await this.queue.clean(ONE_DAY, 'completed');
+    //     await this.queue.clean(ONE_DAY, 'failed');
 
-        console.log('Queue cleaned (last 24 hours)');
-    }
-
-    @Cron('0 12 * * *',{name:'payment-not-received-job'})
-    async failedMarkForBookedButNotPaid(){
-        await this.bookingService.failedMarkForBookedButNotPaid();
-    }
+    //     console.log('Queue cleaned (last 24 hours)');
+    // }
 }

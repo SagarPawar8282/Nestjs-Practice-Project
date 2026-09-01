@@ -13,6 +13,13 @@ export class CustomerController {
     return "test role base authentication";
   }
 
+  @UseGuards(RoleGuard)
+  @Roles('Customer')
+  @Get('getAllUser')
+  async findAllUser(){
+    return await this.customerService.findAll()
+  }
+
   @Get('userId/:id')
   async findOne(@Param ('id',ParseIntPipe)id:number){
     return this.customerService.getCustomerDetailsByUserId(id);

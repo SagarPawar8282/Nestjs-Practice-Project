@@ -1,8 +1,9 @@
-import { BelongsTo, Column, DataType, ForeignKey, HasOne, Model, Table } from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, HasMany, HasOne, Model, Table } from "sequelize-typescript";
 import { Roles } from "../roles/roles.model";
 import { Store } from "../store/store.model";
 import { Admin } from "../admin/admin.model";
 import { Customer } from "../customer/customer.model";
+import { Chat } from "../chat/chat.model";
 
 @Table({ tableName: 'users', timestamps: true })
 export class Users extends Model<Users> {
@@ -46,5 +47,4 @@ export class Users extends Model<Users> {
     @HasOne(()=>Customer)
     customer:Customer;
 
-    
 }

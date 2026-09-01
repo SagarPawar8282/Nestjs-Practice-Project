@@ -15,9 +15,11 @@ import { getQueueToken } from '@nestjs/bull';
 import { createBullBoard } from '@bull-board/api';
 import { ExpressAdapter } from '@bull-board/express';
 import { BullAdapter } from '@bull-board/api/bullAdapter';
+import { HttpMetricsInterceptor } from './common/metrics/interceptor/httpMetricsInterceptor';
+import { nestLoggingInterceptor } from './common/nestLogger/nestLogging.interceptor';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule,{logger:['log','error','debug','warn']});
 
   app.setGlobalPrefix('/v1');
   app.enableCors();
@@ -25,6 +27,9 @@ async function bootstrap() {
   app.use(loggerMiddlewares);
 
   app.useGlobalInterceptors(new AdvanceLoggingResponse());
+  app.useGlobalInterceptors(app.get(HttpMetricsInterceptor));
+  app.useGlobalInterceptors(app.get(nestLoggingInterceptor));
+
   app.useGlobalGuards(new CanAuthGuard());
 
   app.useGlobalPipes(
