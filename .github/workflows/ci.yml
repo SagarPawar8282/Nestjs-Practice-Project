@@ -1,0 +1,34 @@
+name: Backend CI
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+        #step 1 Download the repository gcode onto the runner
+        - name: checkout repository code 
+          uses: actions/checkout@v4
+
+        #step 2 set up the node.js environment with given version
+        - name: Set up node.js
+          uses: actions/setup-node@v4
+          with:
+              node-version: 22
+
+        #step 3 install the dependency 
+        - name: Install dependency
+          run: npm ci
+
+        #step 4 test 
+        - name: run automated tests
+          run: npm test
+
+        #step 5 build
+        - name: build code
+          run: npm run build
+
