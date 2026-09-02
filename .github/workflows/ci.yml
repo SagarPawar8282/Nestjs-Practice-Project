@@ -23,15 +23,19 @@ jobs:
           with:
               node-version: 22
 
-        #step 3 install the dependency 
+        #step 3 lint check the typescript 
+        - name: lint check 
+          run: npm run lint:check
+
+        #step 4 install the dependency 
         - name: Install dependency
           run: npm ci
 
-        #step 4 test 
+        #step 5 test 
         - name: run automated tests
           run: npm test
 
-        #step 5 build
+        #step 6 build
         - name: build code
           run: npm run build
 
