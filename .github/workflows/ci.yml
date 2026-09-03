@@ -40,9 +40,9 @@ jobs:
           run: npm run build
 
         #step 7 uplaod artifact
-        - name: build code
-          uses: actions/uplaod-artifact@v4
-          with: 
+        - name: upload build artifact
+          uses: actions/upload-artifact@v4
+          with:
             name: nestjs-build
             path: dist/
 
