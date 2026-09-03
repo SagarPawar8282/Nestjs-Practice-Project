@@ -47,7 +47,7 @@ jobs:
             path: dist/
 
   download-artifact: 
-    need: build-and-test
+    needs: build-and-test
     runs-on: ubuntu latest
 
     steps:
