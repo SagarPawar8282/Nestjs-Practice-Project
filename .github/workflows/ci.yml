@@ -39,12 +39,26 @@ jobs:
         - name: build code
           run: npm run build
 
-        #step 7 uplaod artifact
+        #step 7 upload artifact
         - name: upload build artifact
           uses: actions/upload-artifact@v4
           with:
             name: nestjs-build
             path: dist/
+
+  download-artifact: 
+    need: build-and-test
+    runs-on: ubuntu latest
+
+    steps:
+        - name: download build artifact
+          uses: actions/upload-artifact@v4
+          with: 
+            name: nestjs-build
+
+        - name: inspect artifact
+          run: find . -maxdepth 3 -type f       
+
 
        
 
