@@ -3,5 +3,6 @@ export const excludedRoutes= [
     '/v1/auth/newCustomer',
     '/v1/auth/newStore',
     '/v1/metrics',
-    '/v1/email'
+    '/v1/email',
+    '/v1/health'
 ]

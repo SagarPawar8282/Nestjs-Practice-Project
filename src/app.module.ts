@@ -16,6 +16,8 @@ import { PresenceModule } from './apis/presence/presence.module';
 import { ReportModule } from './apis/report/report.module';
 import { SchedulesModule } from './apis/schedules/schedules.module';
 import { MoniteringModule } from './redisAction/redisAction.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -71,12 +73,13 @@ import { MoniteringModule } from './redisAction/redisAction.module';
     SchedulesModule,
     MoniteringModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard
-    }
+    },
+    AppService
   ],
 })
 export class AppModule { }
